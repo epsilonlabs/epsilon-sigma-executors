@@ -1,0 +1,12 @@
+@namespace(uri="http://www.eclipse.org/epsilon/etl/EtlSimpleTrace", prefix="etltr")
+package EtlSimpleTrace;
+
+class Trace {
+   val TraceLink[*] links;
+}
+
+class TraceLink {
+   ref EObject[*] sources;
+   ref EObject[*] targets;
+   attr String description;
+}
