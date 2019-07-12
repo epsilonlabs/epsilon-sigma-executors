@@ -4,13 +4,46 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.eclipse.epsilon</groupId>
+  <groupId>org.eclipse.epsilon.labs</groupId>
   <artifactId>executors</artifactId>
-  <version>1.6-SNAPSHOT</version>
+  <version>1.6.0-SNAPSHOT</version>
+
+  <name>${project.groupId}:${project.artifactId}</name>
+  <description>A simple API for running Epsilon Scripts from standalone applications outside of an OSGI environment</description>
+  <url>https://github.com/epsilonlabs/Epsilon-Executors</url>
+  <inceptionYear>2019</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>Eclipse Public License v2.0</name>
+      <url>https://www.eclipse.org/legal/epl-2.0/</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Horacio Hoyos</name>
+      <email>horacio.hoyos@york.ac.uk</email>
+      <organization>University of York</organization>
+      <organizationUrl>https://www.cs.york.ac.uk/</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/epsilonlabs/Epsilon-Executors.git</connection>
+    <developerConnection>scm:git:https://github.com/epsilonlabs/Epsilon-Executors.git</developerConnection>
+    <url>https://github.com/epsilonlabs/Epsilon-Executors</url>
+  </scm>
+
+  <issueManagement>
+    <system>github</system>
+    <url>https://github.com/epsilonlabs/Epsilon-Executors/issues</url>
+  </issueManagement>
 
   <properties>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <repositories>
@@ -23,7 +56,6 @@
       </snapshots>
     </repository>
   </repositories>
-
 
   <dependencies>
     <dependency>
@@ -38,12 +70,25 @@
     </dependency>
   </dependencies>
 
-
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.1</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -55,6 +100,5 @@
       </plugin>
     </plugins>
   </build>
-
 
 </project>
