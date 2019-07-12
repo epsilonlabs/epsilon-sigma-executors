@@ -440,7 +440,7 @@ public class EpsilonExecutor implements Executor {
     		private T result;
             public void run() {
             	try {
-					result = invoqueExecutor();
+					result = invokeExecutor();
 				} catch (EpsilonExecutorException e) {
 					throw new RuntimeException(e);
 				}
@@ -453,7 +453,7 @@ public class EpsilonExecutor implements Executor {
 
     @Override
 	@SuppressWarnings("unchecked")
-	public <R> R invoqueExecutor() throws EpsilonExecutorException {
+	public <R> R invokeExecutor() throws EpsilonExecutorException {
         logger.info("Executing engine.");
         preProfile();
         prepareExecution();

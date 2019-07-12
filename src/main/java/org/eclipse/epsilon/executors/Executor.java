@@ -32,7 +32,7 @@ public interface Executor {
 
 	/**
 	 * Create a Runnable so the executor can be executed in a thread. Internally the
-	 * {@link #invoqueExecutor()} is called. Any exceptions will be wrapped inside a
+	 * {@link #invokeExecutor()} is called. Any exceptions will be wrapped inside a
 	 * {@link RuntimeException}.
 	 * @param <T> 			the return type of the executed module
 	 * @return  the result of the execution
@@ -45,7 +45,7 @@ public interface Executor {
 	 * @throws EpsilonExecutorException if there is an error during execution
 	 * @param <R> 			the return type of the executed module
 	 */
-	<R> R invoqueExecutor() throws EpsilonExecutorException;
+	<R> R invokeExecutor() throws EpsilonExecutorException;
 
 	/**
 	 * Disposes the executor. Implementing classes should perform any clean actions.
