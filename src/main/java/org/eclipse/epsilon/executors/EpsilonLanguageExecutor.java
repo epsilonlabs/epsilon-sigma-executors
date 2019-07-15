@@ -20,7 +20,6 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
 import org.eclipse.epsilon.erl.execute.RuleProfiler;
-import org.eclipse.epsilon.executors.model.IModelBuilder;
 
 /**
  * The IEpsilonLanguageExecutor defines a common executor API that the different Epsilon languages 
@@ -65,11 +64,9 @@ public interface EpsilonLanguageExecutor<R> {
 	/**
 	 * Add the collection of models to the models used during execution.
 	 * <p>
-	 * To facilitate model creation please consider using the {@link IModelBuilder} API.
 	 * 
 	 * @param models				the models to add
 	 * @see IModel
-	 * @see IModelBuilder
 	 */
 	void addModels(Collection<IModel> models);
 	
