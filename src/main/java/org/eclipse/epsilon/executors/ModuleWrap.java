@@ -108,7 +108,7 @@ public class ModuleWrap implements EpsilonLanguageExecutor<Object> {
 
 	@Override
 	public Object execute() throws EolRuntimeException {
-		throw new UnsupportedOperationException("The ModuleWrap does not support the ModuleWrap method.");
+		throw new UnsupportedOperationException("The ModuleWrap does not support the execute method.");
 	}
 
 }
