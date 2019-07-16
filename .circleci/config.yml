@@ -42,12 +42,11 @@ jobs:
           root: .
           paths:
             - target
-      - slack/notify:
-          color: '#42e2f4'
-          message: Build succesful!
-          webhook: https://hooks.slack.com/services/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
-      - slack/notify-on-failure:
-          branches: develop, master
+      - slack/status:
+          fail_only: true
+          only_for_branches: develop, master
+          success_message: New version built
+          failure_message: Error on main branches build.
           webhook: https://hooks.slack.com/services/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
 
   deploy:
