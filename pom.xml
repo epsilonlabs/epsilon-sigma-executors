@@ -192,7 +192,7 @@
             <version>1.6.8</version>
             <extensions>true</extensions>
             <configuration>
-              <nexusUrl>https://oss.sonatype.org/content/repositories/snapshots</nexusUrl>
+              <nexusUrl>https://oss.sonatype.org/content/repositories</nexusUrl>
               <serverId>nexus</serverId>
             </configuration>
           </plugin>
