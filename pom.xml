@@ -9,7 +9,8 @@
   <version>1.0.0-SNAPSHOT</version>
 
   <name>${project.groupId}:${project.artifactId}</name>
-  <description>A simple API for running Epsilon Scripts from standalone applications outside of an OSGI environment</description>
+  <description>Epsilon executors aim to provide an easy API for executing Epsilon engines in non-eclipse environments
+  </description>
   <url>https://github.com/epsilonlabs/Epsilon-Executors</url>
   <inceptionYear>2019</inceptionYear>
 
@@ -22,8 +23,20 @@
 
   <developers>
     <developer>
-      <name>Horacio Hoyos</name>
+      <name>Horacio Hoyos Rodriguez</name>
       <email>horacio.hoyos@york.ac.uk</email>
+      <organization>University of York</organization>
+      <organizationUrl>https://www.cs.york.ac.uk/</organizationUrl>
+    </developer>
+    <developer>
+      <name>Beatriz A. Sanchez</name>
+      <email>basp591@york.ac.uk</email>
+      <organization>University of York</organization>
+      <organizationUrl>https://www.cs.york.ac.uk/</organizationUrl>
+    </developer>
+    <developer>
+      <name>Sina Midani</name>
+      <email>sm1748@york.ac.uk</email>
       <organization>University of York</organization>
       <organizationUrl>https://www.cs.york.ac.uk/</organizationUrl>
     </developer>
@@ -48,23 +61,6 @@
     <slf4j.version>1.7.25</slf4j.version>
   </properties>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
-
-  <repositories>
-    <repository>
-      <id>oss-sonatype</id>
-      <name>oss-sonatype</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
 
   <dependencies>
     <dependency>
@@ -112,7 +108,14 @@
 
   <profiles>
     <profile>
-      <id>ossrh</id>
+      <!-- Use this profile to deploy to a local nexus server (this assumes a "standard" nexus configuration -->
+      <id>local</id>
+      <distributionManagement>
+        <snapshotRepository>
+          <id>nexus</id>
+          <url>http://localhost:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+      </distributionManagement>
       <build>
         <plugins>
           <plugin>
@@ -137,9 +140,63 @@
             </executions>
           </plugin>
           <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.1</version>
+            <extensions>true</extensions>
+            <configuration>
+              <!-- The Base URL of Nexus instance where we want to stage -->
+              <nexusUrl>http://localhost:8081/repository/maven-snapshots/</nexusUrl>
+              <!-- The server "id" element from settings to use authentication from -->
+              <serverId>nexus</serverId>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <!-- This profile is used by CircleCI for deployment -->
+      <id>ossrh</id>
+      <distributionManagement>
+        <snapshotRepository>
+          <id>ossrh</id>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+      <build>
+        <plugins>
+          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-deploy-plugin</artifactId>
-            <version>3.0.0-M1</version>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <configuration>
+                  <gpgArguments>
+                    <!-- Required to accept GPG Passphrase from settings (for GPG v2+) -->
+                    <arg>--pinentry-mode</arg>
+                    <arg>loopback</arg>
+                  </gpgArguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.1</version>
+            <extensions>true</extensions>
+            <configuration>
+              <!-- The Base URL of Nexus instance where we want to stage -->
+              <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
+              <!-- The server "id" element from settings to use authentication from -->
+              <serverId>nexus</serverId>
+            </configuration>
           </plugin>
         </plugins>
       </build>
