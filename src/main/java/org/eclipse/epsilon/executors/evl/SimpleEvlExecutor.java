@@ -11,23 +11,15 @@ package org.eclipse.epsilon.executors.evl;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
-import org.eclipse.epsilon.erl.execute.RuleProfiler;
 import org.eclipse.epsilon.evl.EvlModule;
 import org.eclipse.epsilon.evl.IEvlFixer;
 import org.eclipse.epsilon.evl.IEvlModule;
-import org.eclipse.epsilon.evl.concurrent.EvlModuleParallelElements;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.execute.CommandLineFixer;
@@ -40,7 +32,6 @@ import org.slf4j.LoggerFactory;
  * The EVL executor.
  *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
 public class SimpleEvlExecutor implements EvlExecutor {
 
@@ -57,17 +48,7 @@ public class SimpleEvlExecutor implements EvlExecutor {
 	public SimpleEvlExecutor() {
 		this(new EvlModule(), new CommandLineFixer());
     }
-    
-	/**
-	 * Instantiates a new simple EVL executor that uses an {@link EvlModuleParallelElements} as its
-	 * module, with the provided number of threads.
-	 *
-	 * @param parallelism 			the parallelism to use
-	 */
-	public SimpleEvlExecutor(int parallelism) {
-		this(new EvlModuleParallelElements(parallelism), new CommandLineFixer());
-    }
-	
+
 	/**
 	 * Instantiates a new simple EVL executor that uses an {@link EvlModule} as its module and
 	 * the provided {@link IEvlFixer} as a constraint fixer.
@@ -76,18 +57,6 @@ public class SimpleEvlExecutor implements EvlExecutor {
 	 */
 	public SimpleEvlExecutor(IEvlFixer evlFixer) {
 		this(new EvlModule(), evlFixer);
-    }
-    
-	/**
-	 * Instantiates a new simple EVL executor that uses an {@link EvlModuleParallelElements} as its
-	 * module and the provided {@link IEvlFixer} as a constraint fixer, with the provided number of
-	 * threads.
-	 *
-	 * @param parallelism 			the parallelism o use
-	 * @param evlFixer 				the fixer to use
-	 */
-	public SimpleEvlExecutor(int parallelism, IEvlFixer evlFixer) {
-		this(new EvlModuleParallelElements(parallelism), evlFixer);
     }
     
 	/**
@@ -101,19 +70,17 @@ public class SimpleEvlExecutor implements EvlExecutor {
 		logger.info("Creating the EvlExecutor");
 		module = mdl;
 		delegate = new ModuleWrap(module);
-		if (module.getUnsatisfiedConstraintFixer() == null) {
-			
-		}
+		module.setUnsatisfiedConstraintFixer(evlFixer);
 	}
     
 	@Override
 	public Collection<UnsatisfiedConstraint> execute() throws EolRuntimeException {
-		return module.execute();
+		return (Collection<UnsatisfiedConstraint>) module.execute();
 	}
 	
 	@Override
 	public List<Constraint> getConstraints() {
-		return module.getConstraints();
+		return new ArrayList<>(module.getConstraints().values());
 	}
 	
 	@Override
@@ -123,58 +90,70 @@ public class SimpleEvlExecutor implements EvlExecutor {
 
 	@Override
 	public ConstraintContext getConstraintContext(String name) {
-		return module.getConstraintContext(name);
+		for (ConstraintContext cc : module.getConstraintContexts()) {
+			if (cc.getTypeName().equals(name)) {
+				return cc;
+			}
+		}
+		throw new IllegalArgumentException("No constraint for the given name found");
 	}
 	
 	@Override
 	public Set<UnsatisfiedConstraint> getUnsatisfiedConstraints() {
-		return module.getContext().getUnsatisfiedConstraints();
+		return new HashSet<>(module.getContext().getUnsatisfiedConstraints());
 	}
 
+	@Override
 	public boolean parse(File file) throws Exception {
 		return delegate.parse(file);
 	}
 
+	@Override
 	public boolean parse(String code) throws Exception {
 		return delegate.parse(code);
 	}
 
+	@Override
 	public List<ParseProblem> getParseProblems() {
 		return delegate.getParseProblems();
 	}
 
+	@Override
 	public void addModels(Collection<IModel> models) {
 		delegate.addModels(models);
 	}
 
+	@Override
 	public void addParamters(Map<String, ?> parameters) {
 		delegate.addParamters(parameters);
 	}
 
+	@Override
 	public void addNativeTypeDelegates(Collection<IToolNativeTypeDelegate> nativeDelegates) {
 		delegate.addNativeTypeDelegates(nativeDelegates);
 	}
 
-	public Optional<RuleProfiler> getRuleProfiler() {
-		return delegate.getRuleProfiler();
-	}
-
+	@Override
 	public void disposeModelRepository() {
 		delegate.disposeModelRepository();
 	}
 
+	@Override
 	public void clearModelRepository() {
 		delegate.clearModelRepository();
 	}
 
+	@Override
 	public void dispose() {
 		delegate.dispose();
 	}
 
+	@Override
 	public void preProcess() {
 	
 	}
 
+	@Override
 	public void postProcess() {
 	
 	}

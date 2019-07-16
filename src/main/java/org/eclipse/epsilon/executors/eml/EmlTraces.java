@@ -14,9 +14,8 @@ import org.eclipse.epsilon.eml.trace.MergeTrace;
 
 /**
  * A class to hold the EML results
- * @author Horacio Hoyos Rodriguez
- * @since 1.6
  *
+ * @author Horacio Hoyos Rodriguez
  */
 public class EmlTraces {
 	

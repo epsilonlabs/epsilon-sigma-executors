@@ -9,14 +9,9 @@
 **********************************************************************/
 package org.eclipse.epsilon.executors;
 
-import static org.eclipse.epsilon.common.util.OperatingSystem.getJavaVersion;
-import static org.eclipse.epsilon.common.util.OperatingSystem.getOsNameAndVersion;
-import static org.eclipse.epsilon.common.util.profiling.BenchmarkUtils.getCpuName;
-import static org.eclipse.epsilon.common.util.profiling.BenchmarkUtils.getNumberOfHardwareThreads;
-import static org.eclipse.epsilon.common.util.profiling.BenchmarkUtils.getTime;
-
 import java.nio.file.Path;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,8 +26,6 @@ import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
-import org.eclipse.epsilon.erl.dom.NamedRule;
-import org.eclipse.epsilon.erl.execute.RuleProfiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +33,6 @@ import org.slf4j.LoggerFactory;
  * The Epsilon Executor is used to run the different Language executors. 
  * 
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
- *
  */
 public class EpsilonExecutor implements Executor {
 
@@ -233,13 +224,7 @@ public class EpsilonExecutor implements Executor {
     	
 	    /** The java version. */
 	    private final String javaVersion;
-    	
-	    /** The cpu name. */
-	    private final String cpuName;
-    	
-	    /** The logical processors. */
-	    private final int logicalProcessors;
-    	
+
 	    /** The date. */
 	    private final String date;
 		
@@ -263,11 +248,9 @@ public class EpsilonExecutor implements Executor {
 		 * Instantiates a new execution time data.
 		 */
 		ExecutionTimeData() {
-			osNameAndVersion = getOsNameAndVersion();
-			javaVersion = getJavaVersion();
-			cpuName = getCpuName();
-			logicalProcessors = getNumberOfHardwareThreads();
-			date = getTime();
+			osNameAndVersion = System.getProperty("os.name").toLowerCase();
+			javaVersion = System.getProperty("java.version");
+			date = LocalDate.now().toString();
 		}
 		
 		/**
@@ -278,8 +261,6 @@ public class EpsilonExecutor implements Executor {
 			logger.info(buildLines(
 					osNameAndVersion,
 					javaVersion,
-					cpuName,
-					"Logical processors: " + logicalProcessors,
 					"Starting execution at " + date,
 					logMessagesSeparator
 				));
@@ -294,7 +275,7 @@ public class EpsilonExecutor implements Executor {
 			logger.info(buildLines("",
 				"Profiled processes:",
 				profiledStages.entrySet().stream().map(e -> String.format("%s:%s", e.getKey(), e.getValue())),
-				"Finished execution at " + getTime(),
+				"Finished execution at " + LocalDate.now().toString(),
 				logMessagesSeparator
 			));
 			logger.info(buildLines("",
@@ -346,16 +327,6 @@ public class EpsilonExecutor implements Executor {
 		 * @param languageExecutor the language executor
 		 */
 		void endModule(EpsilonLanguageExecutor<?> languageExecutor) {
-			Optional<RuleProfiler> ruleProfiler = languageExecutor.getRuleProfiler();
-			if(ruleProfiler.isPresent()) {
-				for (Entry<NamedRule, Duration> entry : ruleProfiler.get().getExecutionTimes().entrySet()) {
-					Duration oldValue = profiledRules.put(entry.getKey().getName(), entry.getValue());
-					if (oldValue != null) {
-						System.err.println("Value for rule " + entry.getKey().getName() + " was replaced.");
-					}
-				}
-			}
-			
 		}
 		
 		/**

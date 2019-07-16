@@ -15,7 +15,6 @@ import org.eclipse.epsilon.eol.models.IRelativePathResolver;
  * A base path resolver that uses a prefix (basePath) to create full paths.
  * 
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
 public class BasePathResolver implements IRelativePathResolver {
 

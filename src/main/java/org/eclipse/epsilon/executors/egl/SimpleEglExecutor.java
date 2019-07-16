@@ -21,7 +21,6 @@ import org.eclipse.epsilon.egl.EglTemplateFactoryModuleAdapter;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
-import org.eclipse.epsilon.erl.execute.RuleProfiler;
 import org.eclipse.epsilon.executors.EpsilonLanguageExecutor;
 import org.eclipse.epsilon.executors.ModuleWrap;
 import org.slf4j.Logger;
@@ -31,7 +30,6 @@ import org.slf4j.LoggerFactory;
  * The EGL executor.
  *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
 public class SimpleEglExecutor implements EpsilonLanguageExecutor<Optional<String>> {
 
@@ -107,11 +105,6 @@ public class SimpleEglExecutor implements EpsilonLanguageExecutor<Optional<Strin
 	@Override
 	public void addNativeTypeDelegates(Collection<IToolNativeTypeDelegate> nativeDelegates) {
 		delegate.addNativeTypeDelegates(nativeDelegates);
-	}
-
-	@Override
-	public Optional<RuleProfiler> getRuleProfiler() {
-		return delegate.getRuleProfiler();
 	}
 
 	@Override

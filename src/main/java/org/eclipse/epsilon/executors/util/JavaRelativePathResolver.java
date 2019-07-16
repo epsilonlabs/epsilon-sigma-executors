@@ -44,7 +44,6 @@ import java.util.regex.Pattern;
  * </pre>
  *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
 public class JavaRelativePathResolver extends BasePathResolver implements IRelativePathResolver {
 

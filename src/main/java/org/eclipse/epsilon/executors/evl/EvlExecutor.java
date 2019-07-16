@@ -23,8 +23,6 @@ import org.eclipse.epsilon.executors.EpsilonLanguageExecutor;
  * The IEvlExecutor API provides additional methods retrieve and print the validation results.
  * 
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
- * 
  */
 public interface EvlExecutor extends EpsilonLanguageExecutor<Collection<UnsatisfiedConstraint>>  {
     

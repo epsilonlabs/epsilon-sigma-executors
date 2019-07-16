@@ -13,13 +13,11 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
-import org.eclipse.epsilon.erl.execute.RuleProfiler;
 import org.eclipse.epsilon.etl.EtlModule;
 import org.eclipse.epsilon.etl.IEtlModule;
 import org.eclipse.epsilon.etl.trace.TransformationTrace;
@@ -32,7 +30,6 @@ import org.slf4j.LoggerFactory;
  * The ETL executor
  *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
 public class SimpleEtlExecutor implements EpsilonLanguageExecutor<TransformationTrace> {
 
@@ -66,50 +63,57 @@ public class SimpleEtlExecutor implements EpsilonLanguageExecutor<Transformation
 		return (TransformationTrace) module.execute();
 	}
 
+	@Override
 	public boolean parse(File file) throws Exception {
 		return delegate.parse(file);
 	}
 
+	@Override
 	public boolean parse(String code) throws Exception {
 		return delegate.parse(code);
 	}
 
+	@Override
 	public List<ParseProblem> getParseProblems() {
 		return delegate.getParseProblems();
 	}
 
+	@Override
 	public void addModels(Collection<IModel> models) {
 		delegate.addModels(models);
 	}
 
+	@Override
 	public void addParamters(Map<String, ?> parameters) {
 		delegate.addParamters(parameters);
 	}
 
+	@Override
 	public void addNativeTypeDelegates(Collection<IToolNativeTypeDelegate> nativeDelegates) {
 		delegate.addNativeTypeDelegates(nativeDelegates);
 	}
 
-	public Optional<RuleProfiler> getRuleProfiler() {
-		return delegate.getRuleProfiler();
-	}
-
+	@Override
 	public void disposeModelRepository() {
 		delegate.disposeModelRepository();
 	}
 
+	@Override
 	public void clearModelRepository() {
 		delegate.clearModelRepository();
 	}
 
+	@Override
 	public void dispose() {
 		delegate.dispose();
 	}
 
+	@Override
 	public void preProcess() {
 
 	}
 
+	@Override
 	public void postProcess() {
 
 	}

@@ -14,12 +14,10 @@ package org.eclipse.epsilon.executors;
  * thrown during execution of an executor
  *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
 public class EpsilonExecutorException extends Exception {
 
 	private static final long serialVersionUID = -7589325573726453221L;
-
 
 	/**
 	 * Instantiates a new epsilon executor exception.

@@ -13,16 +13,13 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 import org.eclipse.epsilon.egl.EglTemplateFactory;
 import org.eclipse.epsilon.egl.EgxModule;
-import org.eclipse.epsilon.egl.IEgxModule;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
-import org.eclipse.epsilon.erl.execute.RuleProfiler;
 import org.eclipse.epsilon.executors.EpsilonLanguageExecutor;
 import org.eclipse.epsilon.executors.ModuleWrap;
 import org.slf4j.Logger;
@@ -32,12 +29,11 @@ import org.slf4j.LoggerFactory;
  * The EGX executor.
  *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
 public class SimpleEgxExecutor implements EpsilonLanguageExecutor<Object> {
 
 	private static final Logger logger = LoggerFactory.getLogger(SimpleEgxExecutor.class);
-	private IEgxModule module;
+	private EgxModule module;
 	private ModuleWrap delegate;
 	
 	/**
@@ -61,12 +57,12 @@ public class SimpleEgxExecutor implements EpsilonLanguageExecutor<Object> {
 	}
 	
 	/**
-	 * Instantiates a new simple EGX executor with the provided {@link IEgxModule}.
-	 * @see IEgxModule
+	 * Instantiates a new simple EGX executor with the provided {@link EgxModule}.
+	 * @see EgxModule
 	 *
 	 * @param mdl 					the module
 	 */
-	public SimpleEgxExecutor(IEgxModule mdl) {
+	public SimpleEgxExecutor(EgxModule mdl) {
 		logger.info("Creating the EgxExecutor");
 		module = mdl;
 		delegate = new ModuleWrap(module);
@@ -102,10 +98,6 @@ public class SimpleEgxExecutor implements EpsilonLanguageExecutor<Object> {
 		delegate.addNativeTypeDelegates(nativeDelegates);
 	}
 
-	public Optional<RuleProfiler> getRuleProfiler() {
-		return delegate.getRuleProfiler();
-	}
-
 	public void disposeModelRepository() {
 		delegate.disposeModelRepository();
 	}
@@ -119,11 +111,9 @@ public class SimpleEgxExecutor implements EpsilonLanguageExecutor<Object> {
 	}
 
 	public void preProcess() {
-		
 	}
 
 	public void postProcess() {
-		
 	}
 	
 }

@@ -15,8 +15,8 @@ import org.eclipse.epsilon.executors.EpsilonExecutor.ExecutionTimeData;
 
 /**
  * The Executor interface defines the API for Epsilon executors
+ *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
 public interface Executor {
 

@@ -13,7 +13,6 @@ package org.eclipse.epsilon.executors.util;
  * The Parameter util provides utility methods for creating parameters.
  * 
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
 public class ParameterUtil {
 }
