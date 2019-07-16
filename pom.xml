@@ -192,9 +192,10 @@
             <version>1.6.8</version>
             <extensions>true</extensions>
             <configuration>
-              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
               <!-- This is the id of the server in settings.xml -->
               <serverId>ossrh</serverId>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>true</autoReleaseAfterClose>
             </configuration>
           </plugin>
         </plugins>
