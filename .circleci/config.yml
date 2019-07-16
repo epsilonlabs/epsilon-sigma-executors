@@ -66,7 +66,7 @@ jobs:
       - run: mvn deploy -s .circleci/settings.xml -DskipTest=true
 
       - slack/status:
-          only_for_branches: develop, master
+          only_for_branches: develop,master
           success_message: New version deployed
           failure_message: Error deploying new version
           webhook: https://hooks.slack.com/services/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
