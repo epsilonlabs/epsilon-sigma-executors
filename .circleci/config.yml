@@ -41,7 +41,7 @@ jobs:
           paths:
             - target
 
-  deploy-snapshot:
+  deploy:
     executor: jdk-8
     steps:
       - checkout
@@ -63,10 +63,11 @@ workflows:
   build-deploy:
     jobs:
       - build
-      - deploy-snapshot:
+      - deploy:
           requires:
             - build
           filters:
             branches:
               only:
-                - /^release.*/
+                - develop
+                - master
