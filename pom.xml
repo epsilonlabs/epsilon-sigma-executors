@@ -6,7 +6,7 @@
 
   <groupId>org.eclipse.epsilon.labs</groupId>
   <artifactId>epsilon-sigma-executors</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Epsilon executors aim to provide an easy API for executing Epsilon engines in non-eclipse environments
@@ -142,7 +142,7 @@
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.1</version>
+            <version>1.6.8</version>
             <extensions>true</extensions>
             <configuration>
               <!-- The Base URL of Nexus instance where we want to stage -->
@@ -189,12 +189,10 @@
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.1</version>
+            <version>1.6.8</version>
             <extensions>true</extensions>
             <configuration>
-              <!-- The Base URL of Nexus instance where we want to stage -->
-              <nexusUrl>http://localhost:8081/nexus/</nexusUrl>
-              <!-- The server "id" element from settings to use authentication from -->
+              <nexusUrl>https://oss.sonatype.org/content/repositories/snapshots</nexusUrl>
               <serverId>nexus</serverId>
             </configuration>
           </plugin>
