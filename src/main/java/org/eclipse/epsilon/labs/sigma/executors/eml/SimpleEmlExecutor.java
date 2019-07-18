@@ -7,7 +7,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors.egl;
+package org.eclipse.epsilon.labs.sigma.executors.eml;
 
 import java.io.File;
 import java.util.Collection;
@@ -16,67 +16,54 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
-import org.eclipse.epsilon.egl.EglTemplateFactory;
-import org.eclipse.epsilon.egl.EglTemplateFactoryModuleAdapter;
+import org.eclipse.epsilon.eml.execute.context.EmlContext;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
 import org.eclipse.epsilon.erl.execute.RuleProfiler;
-import org.eclipse.epsilon.executors.EpsilonLanguageExecutor;
-import org.eclipse.epsilon.executors.ModuleWrap;
+import org.eclipse.epsilon.etl.EtlModule;
+import org.eclipse.epsilon.etl.IEtlModule;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The EGL executor.
+ * The EML executor.
  *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
-public class SimpleEglExecutor implements EpsilonLanguageExecutor<Optional<String>> {
+public class SimpleEmlExecutor implements EpsilonLanguageExecutor<EmlTraces> {
 
-	private static final Logger logger = LoggerFactory.getLogger(SimpleEglExecutor.class);
-	
-	private EglTemplateFactoryModuleAdapter module;
-	
+    private static final Logger logger = LoggerFactory.getLogger(SimpleEmlExecutor.class);
+	private IEtlModule module;
 	private ModuleWrap delegate;
-
-	/**
-	 * Instantiates a new simple EGL executor that uses an {@link EglTemplateFactoryModuleAdapter}
-	 * (with an {@link EglTemplateFactory}) as its module.
-	 * @see EglTemplateFactoryModuleAdapter
-	 * @see EglTemplateFactory
-	 */
-	public SimpleEglExecutor() {
-		this(new EglTemplateFactoryModuleAdapter(new EglTemplateFactory()));
+	
+    /**
+     * Instantiates a new simple EML executor that uses an {@link EtlModule} as its module.
+     * @see EtlModule
+     */
+    public SimpleEmlExecutor() {
+    	this(new EtlModule());
     }
-
-	/**
-	 * Instantiates a new simple EGL executor that uses an {@link EglTemplateFactoryModuleAdapter}
-	 * with the provided {@link EglTemplateFactory}
-	 *
-	 * @param templateFactory 		the template factory to use 
-	 */
-	public SimpleEglExecutor(EglTemplateFactory templateFactory) {
-		this(new EglTemplateFactoryModuleAdapter(templateFactory));
-	}
-	
-	/**
-	 * Instantiates a new simple EGL executor that uses the provided {@link EglTemplateFactoryModuleAdapter}
-	 *
-	 * @param mdl 					the Template Factory Module Adapter to use
-	 */
-	public SimpleEglExecutor(EglTemplateFactoryModuleAdapter mdl) {
-		logger.info("Creating the EglExecutor");
-		module = mdl;
+    
+    /**
+     * Instantiates a new simple EML executor that uses the provided {@link IEtlModule} as its module.
+     * @see IEtlModule
+     *
+     * @param mdl 					the module
+     */
+    public SimpleEmlExecutor(IEtlModule mdl) {
+    	logger.info("Creating the EtlExecutor");
+    	module = mdl;
     	delegate = new ModuleWrap(module);
-	}
-	
+    }
+    
 	@Override
-	public Optional<String> execute() throws EolRuntimeException {
-		logger.info("Executing current EGL template.");
-		String r = (String) ((EglTemplateFactoryModuleAdapter)module).execute();
-		return Optional.ofNullable(r);
+	public EmlTraces execute() throws EolRuntimeException {
+		module.execute();
+		EmlContext c = (EmlContext) module.getContext();
+		return new EmlTraces(c.getMatchTrace(), c.getMergeTrace());
 	}
 
 	@Override
@@ -130,13 +117,15 @@ public class SimpleEglExecutor implements EpsilonLanguageExecutor<Optional<Strin
 	}
 
 	@Override
-	public void preProcess() {
-		
-	}
+	public void preProcess() {	}
 
 	@Override
-	public void postProcess() {
-		
+	public void postProcess() {	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return delegate.equals(obj);
 	}
+
 
 }

@@ -7,14 +7,13 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors;
+package org.eclipse.epsilon.labs.sigma.executors;
 
 /**
  * A base exception to wrap different exceptions that can be
  * thrown during execution of an executor
  *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
 public class EpsilonExecutorException extends Exception {
 

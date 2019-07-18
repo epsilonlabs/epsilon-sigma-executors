@@ -6,7 +6,7 @@
 
   <groupId>org.eclipse.epsilon.labs</groupId>
   <artifactId>executors</artifactId>
-  <version>1.6.0-SNAPSHOT</version>
+  <version>2.0.0-SNAPSHOT</version>
 
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Epsilon executors aim to provide an easy API for executing Epsilon engines in non-eclipse environments

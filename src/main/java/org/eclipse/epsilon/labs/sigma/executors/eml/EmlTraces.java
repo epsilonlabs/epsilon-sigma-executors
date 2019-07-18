@@ -7,16 +7,15 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors.eml;
+package org.eclipse.epsilon.labs.sigma.executors.eml;
 
 import org.eclipse.epsilon.ecl.trace.MatchTrace;
 import org.eclipse.epsilon.eml.trace.MergeTrace;
 
 /**
  * A class to hold the EML results
- * @author Horacio Hoyos Rodriguez
- * @since 1.6
  *
+ * @author Horacio Hoyos Rodriguez
  */
 public class EmlTraces {
 	

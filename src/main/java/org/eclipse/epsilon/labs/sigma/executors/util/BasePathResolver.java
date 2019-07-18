@@ -7,7 +7,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors.util;
+package org.eclipse.epsilon.labs.sigma.executors.util;
 
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 
@@ -15,7 +15,6 @@ import org.eclipse.epsilon.eol.models.IRelativePathResolver;
  * A base path resolver that uses a prefix (basePath) to create full paths.
  * 
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
 public class BasePathResolver implements IRelativePathResolver {
 

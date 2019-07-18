@@ -7,7 +7,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors.util;
+package org.eclipse.epsilon.labs.sigma.executors.util;
 
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
 
@@ -44,7 +44,6 @@ import java.util.regex.Pattern;
  * </pre>
  *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
 public class JavaRelativePathResolver extends BasePathResolver implements IRelativePathResolver {
 

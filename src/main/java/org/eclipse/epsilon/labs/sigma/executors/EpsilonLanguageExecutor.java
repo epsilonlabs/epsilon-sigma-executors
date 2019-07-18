@@ -7,7 +7,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors;
+package org.eclipse.epsilon.labs.sigma.executors;
 
 import java.io.File;
 import java.util.Collection;
@@ -33,7 +33,6 @@ import org.eclipse.epsilon.erl.execute.RuleProfiler;
  * @param <R> 						the specific type returned by the executor
  *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  *
  */
 public interface EpsilonLanguageExecutor<R> {

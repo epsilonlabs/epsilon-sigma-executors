@@ -7,16 +7,15 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors;
+package org.eclipse.epsilon.labs.sigma.executors;
+
+import org.eclipse.epsilon.labs.sigma.executors.util.ExecutionTimeData;
 
 import java.util.Optional;
-
-import org.eclipse.epsilon.executors.EpsilonExecutor.ExecutionTimeData;
 
 /**
  * The Executor interface defines the API for Epsilon executors
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
 public interface Executor {
 

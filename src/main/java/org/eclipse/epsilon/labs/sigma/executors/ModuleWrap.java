@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  **********************************************************************/
-package org.eclipse.epsilon.executors;
+package org.eclipse.epsilon.labs.sigma.executors;
 
 import java.io.File;
 import java.util.Collection;
@@ -32,8 +32,6 @@ import org.eclipse.epsilon.erl.execute.RuleProfiler;
  * If any of these three methods is invoked an {@link UnsupportedOperationException} will be thrown. 
  *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
- *
  */
 public class ModuleWrap implements EpsilonLanguageExecutor<Object> {
 

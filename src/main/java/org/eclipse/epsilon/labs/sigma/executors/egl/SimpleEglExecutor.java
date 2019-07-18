@@ -7,7 +7,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors.egl;
+package org.eclipse.epsilon.labs.sigma.executors.egl;
 
 import java.io.File;
 import java.util.Collection;
@@ -17,113 +17,121 @@ import java.util.Optional;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 import org.eclipse.epsilon.egl.EglTemplateFactory;
-import org.eclipse.epsilon.egl.EgxModule;
-import org.eclipse.epsilon.egl.IEgxModule;
+import org.eclipse.epsilon.egl.EglTemplateFactoryModuleAdapter;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
 import org.eclipse.epsilon.erl.execute.RuleProfiler;
-import org.eclipse.epsilon.executors.EpsilonLanguageExecutor;
-import org.eclipse.epsilon.executors.ModuleWrap;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The EGX executor.
+ * The EGL executor.
  *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
  */
-public class SimpleEgxExecutor implements EpsilonLanguageExecutor<Object> {
+public class SimpleEglExecutor implements EpsilonLanguageExecutor<Optional<String>> {
 
-	private static final Logger logger = LoggerFactory.getLogger(SimpleEgxExecutor.class);
-	private IEgxModule module;
+	private static final Logger logger = LoggerFactory.getLogger(SimpleEglExecutor.class);
+	
+	private EglTemplateFactoryModuleAdapter module;
+	
 	private ModuleWrap delegate;
-	
+
 	/**
-	 * Instantiates a new simple EGX executor that uses an {@link EgxModule} as its module.
-	 * @see EgxModule
-	 */
-	public SimpleEgxExecutor() {
-		this(new EgxModule());
-	}
-	
-	/**
-	 * Instantiates a new simple EGX executor that uses the provided {@link EglTemplateFactory}
-	 * to create a new {@link EgxModule} to use as its module
+	 * Instantiates a new simple EGL executor that uses an {@link EglTemplateFactoryModuleAdapter}
+	 * (with an {@link EglTemplateFactory}) as its module.
+	 * @see EglTemplateFactoryModuleAdapter
 	 * @see EglTemplateFactory
-	 * @see EgxModule
-	 *
-	 * @param templateFactory 		the template factory to use
 	 */
-	public SimpleEgxExecutor(EglTemplateFactory templateFactory) {
-		this(new EgxModule(templateFactory));
+	public SimpleEglExecutor() {
+		this(new EglTemplateFactoryModuleAdapter(new EglTemplateFactory()));
+    }
+
+	/**
+	 * Instantiates a new simple EGL executor that uses an {@link EglTemplateFactoryModuleAdapter}
+	 * with the provided {@link EglTemplateFactory}
+	 *
+	 * @param templateFactory 		the template factory to use 
+	 */
+	public SimpleEglExecutor(EglTemplateFactory templateFactory) {
+		this(new EglTemplateFactoryModuleAdapter(templateFactory));
 	}
 	
 	/**
-	 * Instantiates a new simple EGX executor with the provided {@link IEgxModule}.
-	 * @see IEgxModule
+	 * Instantiates a new simple EGL executor that uses the provided {@link EglTemplateFactoryModuleAdapter}
 	 *
-	 * @param mdl 					the module
+	 * @param mdl 					the Template Factory Module Adapter to use
 	 */
-	public SimpleEgxExecutor(IEgxModule mdl) {
-		logger.info("Creating the EgxExecutor");
+	public SimpleEglExecutor(EglTemplateFactoryModuleAdapter mdl) {
+		logger.info("Creating the EglExecutor");
 		module = mdl;
-		delegate = new ModuleWrap(module);
+    	delegate = new ModuleWrap(module);
 	}
 	
 	@Override
-	public Object execute() throws EolRuntimeException {
-		logger.info("Executing EGX Script.");
-		return module.execute();
+	public Optional<String> execute() throws EolRuntimeException {
+		logger.info("Executing current EGL template.");
+		String r = (String) ((EglTemplateFactoryModuleAdapter)module).execute();
+		return Optional.ofNullable(r);
 	}
 
+	@Override
 	public boolean parse(File file) throws Exception {
 		return delegate.parse(file);
 	}
 
+	@Override
 	public boolean parse(String code) throws Exception {
 		return delegate.parse(code);
 	}
 
+	@Override
 	public List<ParseProblem> getParseProblems() {
 		return delegate.getParseProblems();
 	}
 
+	@Override
 	public void addModels(Collection<IModel> models) {
 		delegate.addModels(models);
 	}
 
+	@Override
 	public void addParamters(Map<String, ?> parameters) {
 		delegate.addParamters(parameters);
 	}
 
+	@Override
 	public void addNativeTypeDelegates(Collection<IToolNativeTypeDelegate> nativeDelegates) {
 		delegate.addNativeTypeDelegates(nativeDelegates);
 	}
 
+	@Override
 	public Optional<RuleProfiler> getRuleProfiler() {
 		return delegate.getRuleProfiler();
 	}
 
+	@Override
 	public void disposeModelRepository() {
 		delegate.disposeModelRepository();
 	}
 
+	@Override
 	public void clearModelRepository() {
 		delegate.clearModelRepository();
 	}
 
+	@Override
 	public void dispose() {
 		delegate.dispose();
 	}
 
-	public void preProcess() {
-		
-	}
+	@Override
+	public void preProcess() {	}
 
-	public void postProcess() {
-		
-	}
-	
+	@Override
+	public void postProcess() {	}
+
 }
