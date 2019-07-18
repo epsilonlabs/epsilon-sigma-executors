@@ -11,7 +11,7 @@
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Epsilon executors aim to provide an easy API for executing Epsilon engines in non-eclipse environments
   </description>
-  <url>https://github.com/epsilonlabs/Epsilon-Executors</url>
+  <url>https://github.com/epsilonlabs/epsilon-sigma-executors</url>
   <inceptionYear>2019</inceptionYear>
 
   <licenses>
@@ -43,14 +43,14 @@
   </developers>
 
   <scm>
-    <connection>scm:git:https://github.com/epsilonlabs/Epsilon-Executors.git</connection>
-    <developerConnection>scm:git:https://github.com/epsilonlabs/Epsilon-Executors.git</developerConnection>
-    <url>https://github.com/epsilonlabs/Epsilon-Executors</url>
+    <connection>scm:git:https://github.com/epsilonlabs/epsilon-sigma-executors.git</connection>
+    <developerConnection>scm:git:https://github.com/epsilonlabs/epsilon-sigma-executors.git</developerConnection>
+    <url>https://github.com/epsilonlabs/epsilon-sigma-executors</url>
   </scm>
 
   <issueManagement>
     <system>github</system>
-    <url>https://github.com/epsilonlabs/Epsilon-Executors/issues</url>
+    <url>https://github.com/epsilonlabs/epsilon-sigma-executors/issues</url>
   </issueManagement>
 
   <properties>
