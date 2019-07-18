@@ -19,8 +19,6 @@ jobs:
             - m2-{{ checksum "pom.xml" }}
             - m2-
 
-      - run: mvn dependency:go-offline
-
       - save_cache:
           key: m2-{{ checksum "pom.xml" }}
           paths:
@@ -28,26 +26,10 @@ jobs:
 
       - run: mvn clean install
 
-      # Save built artifacts
-      - run: |
-          set -xu
-          mkdir -p artifacts
-          cp -r target/*.jar artifacts/
-
-      - store_artifacts:
-          path: artifacts
-          destination: jars
-
-      - persist_to_workspace:
-          root: .
-          paths:
-            - target
-      - slack/notify:
-          color: '#42e2f4'
-          message: Build succesful!
-          webhook: https://hooks.slack.com/services/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
-      - slack/notify-on-failure:
-          branches: develop, master
+      - slack/status:
+          fail_only: true
+          success_message: New version built
+          failure_message: Error on main branches build.
           webhook: https://hooks.slack.com/services/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
 
   deploy:
@@ -66,6 +48,12 @@ jobs:
       - run: echo -e $GPG_KEY | gpg --import --no-tty --batch --yes
 
       - run: mvn deploy -s .circleci/settings.xml -DskipTest=true
+
+      - slack/status:
+          only_for_branches: develop,master
+          success_message: New version deployed
+          failure_message: Error deploying new version
+          webhook: https://hooks.slack.com/services/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
 
 workflows:
   version: 2
