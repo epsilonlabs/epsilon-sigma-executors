@@ -7,7 +7,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors;
+package org.eclipse.epsilon.labs.sigma.executors;
 
 /**
  * A base exception to wrap different exceptions that can be
@@ -18,6 +18,7 @@ package org.eclipse.epsilon.executors;
 public class EpsilonExecutorException extends Exception {
 
 	private static final long serialVersionUID = -7589325573726453221L;
+
 
 	/**
 	 * Instantiates a new epsilon executor exception.

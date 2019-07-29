@@ -7,7 +7,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors.util;
+package org.eclipse.epsilon.labs.sigma.executors.util;
 
 /**
  * The Parameter util provides utility methods for creating parameters.

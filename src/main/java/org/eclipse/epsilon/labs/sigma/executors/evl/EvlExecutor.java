@@ -7,7 +7,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors.evl;
+package org.eclipse.epsilon.labs.sigma.executors.evl;
 
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -17,14 +17,15 @@ import java.util.Set;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
-import org.eclipse.epsilon.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
 
 /**
  * The IEvlExecutor API provides additional methods retrieve and print the validation results.
  * 
  * @author Horacio Hoyos Rodriguez
+ * 
  */
-public interface EvlExecutor extends EpsilonLanguageExecutor<Collection<UnsatisfiedConstraint>>  {
+public interface EvlExecutor extends EpsilonLanguageExecutor<Collection<UnsatisfiedConstraint>> {
     
     /**
      * Send the unsatisfied constraints to the log, using the implementation logger.

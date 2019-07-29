@@ -7,7 +7,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors.egl;
+package org.eclipse.epsilon.labs.sigma.executors.egl;
 
 import java.io.File;
 import java.util.Collection;
@@ -21,8 +21,9 @@ import org.eclipse.epsilon.egl.EglTemplateFactoryModuleAdapter;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
-import org.eclipse.epsilon.executors.EpsilonLanguageExecutor;
-import org.eclipse.epsilon.executors.ModuleWrap;
+import org.eclipse.epsilon.erl.execute.RuleProfiler;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,6 +109,11 @@ public class SimpleEglExecutor implements EpsilonLanguageExecutor<Optional<Strin
 	}
 
 	@Override
+	public Optional<RuleProfiler> getRuleProfiler() {
+		return delegate.getRuleProfiler();
+	}
+
+	@Override
 	public void disposeModelRepository() {
 		delegate.disposeModelRepository();
 	}
@@ -123,13 +129,9 @@ public class SimpleEglExecutor implements EpsilonLanguageExecutor<Optional<Strin
 	}
 
 	@Override
-	public void preProcess() {
-		
-	}
+	public void preProcess() {	}
 
 	@Override
-	public void postProcess() {
-		
-	}
+	public void postProcess() {	}
 
 }

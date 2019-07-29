@@ -7,9 +7,10 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors.eol;
+package org.eclipse.epsilon.labs.sigma.executors.eol;
 
-import org.eclipse.epsilon.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
+
 import java.util.List;
 
 /**
@@ -23,12 +24,10 @@ import java.util.List;
  * {@link EolMode#SCRIPT}.
  *
  * @author Horacio Hoyos Rodriguez
- * @since 1.6
- *
  */
 public interface EolExecutor extends EpsilonLanguageExecutor<Object> {
 
-	public static enum EolMode {
+	enum EolMode {
 		SCRIPT,
 		OPERATION
 	}

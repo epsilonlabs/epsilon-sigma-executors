@@ -7,61 +7,74 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors.eml;
+package org.eclipse.epsilon.labs.sigma.executors.egl;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
-import org.eclipse.epsilon.eml.execute.context.EmlContext;
+import org.eclipse.epsilon.egl.EglTemplateFactory;
+import org.eclipse.epsilon.egl.EgxModule;
+import org.eclipse.epsilon.egl.IEgxModule;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
-import org.eclipse.epsilon.etl.EtlModule;
-import org.eclipse.epsilon.etl.IEtlModule;
-import org.eclipse.epsilon.executors.EpsilonLanguageExecutor;
-import org.eclipse.epsilon.executors.ModuleWrap;
+import org.eclipse.epsilon.erl.execute.RuleProfiler;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The EML executor.
+ * The EGX executor.
  *
  * @author Horacio Hoyos Rodriguez
  */
-public class SimpleEmlExecutor implements EpsilonLanguageExecutor<EmlTraces> {
+public class SimpleEgxExecutor implements EpsilonLanguageExecutor<Object> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SimpleEmlExecutor.class);
-	private IEtlModule module;
+	private static final Logger logger = LoggerFactory.getLogger(SimpleEgxExecutor.class);
+	private IEgxModule module;
 	private ModuleWrap delegate;
 	
-    /**
-     * Instantiates a new simple EML executor that uses an {@link EtlModule} as its module.
-     * @see EtlModule
-     */
-    public SimpleEmlExecutor() {
-    	this(new EtlModule());
-    }
-    
-    /**
-     * Instantiates a new simple EML executor that uses the provided {@link IEtlModule} as its module.
-     * @see IEtlModule
-     *
-     * @param mdl 					the module
-     */
-    public SimpleEmlExecutor(IEtlModule mdl) {
-    	logger.info("Creating the EtlExecutor");
-    	module = mdl;
-    	delegate = new ModuleWrap(module);
-    }
-    
+	/**
+	 * Instantiates a new simple EGX executor that uses an {@link EgxModule} as its module.
+	 * @see EgxModule
+	 */
+	public SimpleEgxExecutor() {
+		this(new EgxModule());
+	}
+	
+	/**
+	 * Instantiates a new simple EGX executor that uses the provided {@link EglTemplateFactory}
+	 * to create a new {@link EgxModule} to use as its module
+	 * @see EglTemplateFactory
+	 * @see EgxModule
+	 *
+	 * @param templateFactory 		the template factory to use
+	 */
+	public SimpleEgxExecutor(EglTemplateFactory templateFactory) {
+		this(new EgxModule(templateFactory));
+	}
+	
+	/**
+	 * Instantiates a new simple EGX executor with the provided {@link IEgxModule}.
+	 * @see IEgxModule
+	 *
+	 * @param mdl 					the module
+	 */
+	public SimpleEgxExecutor(IEgxModule mdl) {
+		logger.info("Creating the EgxExecutor");
+		module = mdl;
+		delegate = new ModuleWrap(module);
+	}
+	
 	@Override
-	public EmlTraces execute() throws EolRuntimeException {
-		module.execute();
-		EmlContext c = (EmlContext) module.getContext();
-		return new EmlTraces(c.getMatchTrace(), c.getMergeTrace());
+	public Object execute() throws EolRuntimeException {
+		logger.info("Executing EGX Script.");
+		return module.execute();
 	}
 
 	@Override
@@ -95,6 +108,11 @@ public class SimpleEmlExecutor implements EpsilonLanguageExecutor<EmlTraces> {
 	}
 
 	@Override
+	public Optional<RuleProfiler> getRuleProfiler() {
+		return delegate.getRuleProfiler();
+	}
+
+	@Override
 	public void disposeModelRepository() {
 		delegate.disposeModelRepository();
 	}
@@ -110,16 +128,9 @@ public class SimpleEmlExecutor implements EpsilonLanguageExecutor<EmlTraces> {
 	}
 
 	@Override
-	public void preProcess() {
-	}
+	public void preProcess() { }
 
 	@Override
-	public void postProcess() {
-	}
-
-	public boolean equals(Object obj) {
-		return delegate.equals(obj);
-	}
-
-
+	public void postProcess() {	}
+	
 }

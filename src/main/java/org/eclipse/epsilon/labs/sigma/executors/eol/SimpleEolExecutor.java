@@ -7,7 +7,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors.eol;
+package org.eclipse.epsilon.labs.sigma.executors.eol;
 
 import java.io.File;
 import java.util.Collection;
@@ -17,13 +17,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
-import org.eclipse.epsilon.eol.EolModule;
 import org.eclipse.epsilon.eol.IEolModule;
+import org.eclipse.epsilon.eol.concurrent.EolModuleParallel;
 import org.eclipse.epsilon.eol.dom.Operation;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
-import org.eclipse.epsilon.executors.ModuleWrap;
+import org.eclipse.epsilon.erl.execute.RuleProfiler;
+import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Horacio Hoyos Rodriguez
  */
-public class SimpleEolExecutor implements EolExecutor  {
+public class SimpleEolExecutor implements EolExecutor {
 
 	private static final Logger logger = LoggerFactory.getLogger(SimpleEolExecutor.class);
 
@@ -43,8 +44,10 @@ public class SimpleEolExecutor implements EolExecutor  {
 	private ModuleWrap delegate;
 	
 	/**
-	 * Instantiates a new simple EOL executor. This executor will execute the complete code/script.
-	 *
+	 * Instantiates a new simple EOL executor that uses an {@link EolModuleParallel} (with one 
+	 * thread) as its module.
+	 * This executor will execute the complete code/script.
+	 * @see EolModuleParallel
 	 */
 	public SimpleEolExecutor() {
 		this(null, Collections.emptyList());
@@ -59,23 +62,44 @@ public class SimpleEolExecutor implements EolExecutor  {
 	public SimpleEolExecutor(IEolModule mdl) {
 		this(null, Collections.emptyList(), mdl);
 	}
-
+	
 	/**
-	 * Instantiates a new simple EOL executor that will only execute a single operation within the code/script.
+	 * Instantiates a new simple EOL executor that uses an {@link EolModuleParallel} (with one 
+	 * thread) as its module, but that will only execute a single operation within the code/script.
 	 * The constructor accepts a list of arguments to pass to the operation, i.e. arguments are
 	 * position based.
+	 * @see EolModuleParallel
+	 * 
 	 *
 	 * @param oprtnNm 				the name of the operation to invoke
 	 * @param arguments 			the arguments to be passed to the operation (position based).
-	 *
+	 * 								
 	 */
 	public SimpleEolExecutor(String oprtnNm, List<Object> arguments) {
-		this(oprtnNm, arguments, new EolModule());
+		this(oprtnNm, arguments, 1);
 	}
-
+	
+	/**
+	 * Instantiates a new simple EOL executor that uses an {@link EolModuleParallel} (with one 
+	 * thread) as its module, but that will only execute a single operation within the code/script.
+	 * The constructor accepts a list of arguments to pass to the operation, i.e. arguments are
+	 * position based. Additionally, the number of threads to use can also be specified.
+	 * @see EolModuleParallel
+	 *
+	 * @param oprtnNm 				the name of the operation to invoke
+	 * @param argmnts	 			the arguments to be passed to the operation (position based).
+	 * @param nmbrThrds 			the number of threads
+	 */
+	public SimpleEolExecutor(String oprtnNm, List<Object> argmnts, int nmbrThrds) {
+		this(oprtnNm, argmnts, new EolModuleParallel(nmbrThrds));
+	}
+	
 	/**
 	 * Instantiates a new simple EOL executor that the provided {@link IEolModule} as its module,
 	 * but that will only execute a single operation within the code/script.
+	 * The constructor accepts a list of arguments to pass to the operation, i.e. arguments are
+	 * position based. Additionally, the number of threads to use can also be specified.
+	 * @see EolModuleParallel
 	 *
 	 * @param oprtnNm 				the name of the operation to invoke
 	 * @param argmnts 				the arguments to be passed to the operation (position based).
@@ -115,48 +139,60 @@ public class SimpleEolExecutor implements EolExecutor  {
 		return new SimpleEolExecutor(operationName, Collections.emptyList());
 	}
 
+	@Override
 	public boolean parse(File file) throws Exception {
 		return delegate.parse(file);
 	}
 
+	@Override
 	public boolean parse(String code) throws Exception {
 		return delegate.parse(code);
 	}
 
+	@Override
 	public List<ParseProblem> getParseProblems() {
 		return delegate.getParseProblems();
 	}
 
+	@Override
 	public void addModels(Collection<IModel> models) {
 		delegate.addModels(models);
 	}
 
+	@Override
 	public void addParamters(Map<String, ?> parameters) {
 		delegate.addParamters(parameters);
 	}
 
+	@Override
 	public void addNativeTypeDelegates(Collection<IToolNativeTypeDelegate> nativeDelegates) {
 		delegate.addNativeTypeDelegates(nativeDelegates);
 	}
 
+	@Override
+	public Optional<RuleProfiler> getRuleProfiler() {
+		return delegate.getRuleProfiler();
+	}
+
+	@Override
 	public void disposeModelRepository() {
 		delegate.disposeModelRepository();
 	}
 
+	@Override
 	public void clearModelRepository() {
 		delegate.clearModelRepository();
 	}
 
+	@Override
 	public void dispose() {
 		delegate.dispose();
 	}
 
-	public void preProcess() {
+	@Override
+	public void preProcess() { }
 
-	}
-
-	public void postProcess() {
-
-	}
+	@Override
+	public void postProcess() {	}
 
 }

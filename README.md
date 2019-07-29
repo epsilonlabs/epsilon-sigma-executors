@@ -16,14 +16,14 @@ epsilon-sigma-executors | Epsilon   |
 
 ## Installation
 
-The easiest way is to add a maven depedendency to your project's pom:
+The easiest way is to add a maven dependency to your project's pom:
 
 ```
 <dependencies>
 	<dependency>
    		<groupId>org.eclipse.epsilon.labs/groupId>
-		<artifactId>executors</artifactId>
-		<version>1.0.0</version>
+		<artifactId>epsilon-sigma-executors</artifactId>
+		<version>2.0.0</version>
 	</dependency>
 </dependencies>
 ```

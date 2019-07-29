@@ -7,17 +7,19 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors;
+package org.eclipse.epsilon.labs.sigma.executors;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
+import org.eclipse.epsilon.erl.execute.RuleProfiler;
 
 /**
  * The IEpsilonLanguageExecutor defines a common executor API that the different Epsilon languages 
@@ -82,6 +84,13 @@ public interface EpsilonLanguageExecutor<R> {
 	 * @see IToolNativeTypeDelegate
 	 */
 	void addNativeTypeDelegates(Collection<IToolNativeTypeDelegate> nativeDelegates);
+	
+	/**
+	 * If profiling is activated for the execution, this method allows retrieving the profiler to
+	 * query the profiling information
+	 * @return	the executor profile, if present. Else an empty Optional is returned.
+	 */
+	Optional<RuleProfiler> getRuleProfiler();
 	
 	/**
 	 * Dispose the model repository used by the executor. This methods effectively disposes all

@@ -7,24 +7,32 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors.evl;
+package org.eclipse.epsilon.labs.sigma.executors.evl;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
+import org.eclipse.epsilon.erl.execute.RuleProfiler;
 import org.eclipse.epsilon.evl.EvlModule;
 import org.eclipse.epsilon.evl.IEvlFixer;
 import org.eclipse.epsilon.evl.IEvlModule;
+import org.eclipse.epsilon.evl.concurrent.EvlModuleParallelElements;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.execute.CommandLineFixer;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
-import org.eclipse.epsilon.executors.ModuleWrap;
+import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +56,17 @@ public class SimpleEvlExecutor implements EvlExecutor {
 	public SimpleEvlExecutor() {
 		this(new EvlModule(), new CommandLineFixer());
     }
-
+    
+	/**
+	 * Instantiates a new simple EVL executor that uses an {@link EvlModuleParallelElements} as its
+	 * module, with the provided number of threads.
+	 *
+	 * @param parallelism 			the parallelism to use
+	 */
+	public SimpleEvlExecutor(int parallelism) {
+		this(new EvlModuleParallelElements(parallelism), new CommandLineFixer());
+    }
+	
 	/**
 	 * Instantiates a new simple EVL executor that uses an {@link EvlModule} as its module and
 	 * the provided {@link IEvlFixer} as a constraint fixer.
@@ -57,6 +75,18 @@ public class SimpleEvlExecutor implements EvlExecutor {
 	 */
 	public SimpleEvlExecutor(IEvlFixer evlFixer) {
 		this(new EvlModule(), evlFixer);
+    }
+    
+	/**
+	 * Instantiates a new simple EVL executor that uses an {@link EvlModuleParallelElements} as its
+	 * module and the provided {@link IEvlFixer} as a constraint fixer, with the provided number of
+	 * threads.
+	 *
+	 * @param parallelism 			the parallelism o use
+	 * @param evlFixer 				the fixer to use
+	 */
+	public SimpleEvlExecutor(int parallelism, IEvlFixer evlFixer) {
+		this(new EvlModuleParallelElements(parallelism), evlFixer);
     }
     
 	/**
@@ -70,17 +100,19 @@ public class SimpleEvlExecutor implements EvlExecutor {
 		logger.info("Creating the EvlExecutor");
 		module = mdl;
 		delegate = new ModuleWrap(module);
-		module.setUnsatisfiedConstraintFixer(evlFixer);
+		if (module.getUnsatisfiedConstraintFixer() == null) {
+			
+		}
 	}
     
 	@Override
 	public Collection<UnsatisfiedConstraint> execute() throws EolRuntimeException {
-		return (Collection<UnsatisfiedConstraint>) module.execute();
+		return module.execute();
 	}
 	
 	@Override
 	public List<Constraint> getConstraints() {
-		return new ArrayList<>(module.getConstraints().values());
+		return module.getConstraints();
 	}
 	
 	@Override
@@ -90,17 +122,12 @@ public class SimpleEvlExecutor implements EvlExecutor {
 
 	@Override
 	public ConstraintContext getConstraintContext(String name) {
-		for (ConstraintContext cc : module.getConstraintContexts()) {
-			if (cc.getTypeName().equals(name)) {
-				return cc;
-			}
-		}
-		throw new IllegalArgumentException("No constraint for the given name found");
+		return module.getConstraintContext(name);
 	}
 	
 	@Override
 	public Set<UnsatisfiedConstraint> getUnsatisfiedConstraints() {
-		return new HashSet<>(module.getContext().getUnsatisfiedConstraints());
+		return module.getContext().getUnsatisfiedConstraints();
 	}
 
 	@Override
@@ -134,6 +161,11 @@ public class SimpleEvlExecutor implements EvlExecutor {
 	}
 
 	@Override
+	public Optional<RuleProfiler> getRuleProfiler() {
+		return delegate.getRuleProfiler();
+	}
+
+	@Override
 	public void disposeModelRepository() {
 		delegate.disposeModelRepository();
 	}
@@ -149,14 +181,10 @@ public class SimpleEvlExecutor implements EvlExecutor {
 	}
 
 	@Override
-	public void preProcess() {
-	
-	}
+	public void preProcess() { }
 
 	@Override
-	public void postProcess() {
-	
-	}
+	public void postProcess() {	}
 
 	@Override
 	public void logUnsatisfied(Collection<UnsatisfiedConstraint> unsatisfiedConstraints) {

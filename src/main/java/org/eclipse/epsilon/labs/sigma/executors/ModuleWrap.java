@@ -7,20 +7,21 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  **********************************************************************/
-package org.eclipse.epsilon.executors;
+package org.eclipse.epsilon.labs.sigma.executors;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 import org.eclipse.epsilon.eol.IEolModule;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
-import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.models.IModel;
-import org.eclipse.epsilon.eol.types.EolAnyType;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
+import org.eclipse.epsilon.erl.IErlModule;
+import org.eclipse.epsilon.erl.execute.RuleProfiler;
 
 /**
  * This implementation of EpsilonLanguageExecutor that provides a proxy into the IEolModule methods
@@ -31,7 +32,6 @@ import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
  * If any of these three methods is invoked an {@link UnsupportedOperationException} will be thrown. 
  *
  * @author Horacio Hoyos Rodriguez
- *
  */
 public class ModuleWrap implements EpsilonLanguageExecutor<Object> {
 
@@ -58,23 +58,25 @@ public class ModuleWrap implements EpsilonLanguageExecutor<Object> {
 
 	@Override
 	public void addModels(Collection<IModel> models) {
-		this.module.getContext().getModelRepository().getModels().addAll(models);
+		this.module.getContext().getModelRepository().addModels(models.toArray(new IModel[0]));
 	}
 
 	@Override
 	public void addParamters(Map<String, ?> parameters) {
-		for (Map.Entry<String, ?> p : parameters.entrySet()) {
-			this.module.getContext().getFrameStack().putGlobal(
-					new Variable(
-							p.getKey(),
-							p.getValue(),
-							EolAnyType.Instance));
-		}
+		this.module.getContext().getFrameStack().put(parameters, true);
 	}
 
 	@Override
 	public void addNativeTypeDelegates(Collection<IToolNativeTypeDelegate> nativeDelegates) {
 		this.module.getContext().getNativeTypeDelegates().addAll(nativeDelegates);
+	}
+
+	@Override
+	public Optional<RuleProfiler> getRuleProfiler() {
+		if (module instanceof IErlModule) {
+			return Optional.of(((IErlModule)module).getContext().getExecutorFactory().getRuleProfiler());
+		}
+		return Optional.empty();
 	}
 
 	@Override

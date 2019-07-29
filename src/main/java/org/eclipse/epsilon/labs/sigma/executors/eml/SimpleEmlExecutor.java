@@ -7,60 +7,63 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.executors.etl;
+package org.eclipse.epsilon.labs.sigma.executors.eml;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
+import org.eclipse.epsilon.eml.execute.context.EmlContext;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
+import org.eclipse.epsilon.erl.execute.RuleProfiler;
 import org.eclipse.epsilon.etl.EtlModule;
 import org.eclipse.epsilon.etl.IEtlModule;
-import org.eclipse.epsilon.etl.trace.TransformationTrace;
-import org.eclipse.epsilon.executors.EpsilonLanguageExecutor;
-import org.eclipse.epsilon.executors.ModuleWrap;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The ETL executor
+ * The EML executor.
  *
  * @author Horacio Hoyos Rodriguez
  */
-public class SimpleEtlExecutor implements EpsilonLanguageExecutor<TransformationTrace> {
+public class SimpleEmlExecutor implements EpsilonLanguageExecutor<EmlTraces> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SimpleEtlExecutor.class);
-    private IEtlModule module;
-    private ModuleWrap delegate;
-
+    private static final Logger logger = LoggerFactory.getLogger(SimpleEmlExecutor.class);
+	private IEtlModule module;
+	private ModuleWrap delegate;
+	
     /**
-     * Instantiates a new simple ETL executor that uses an {@link EtlModule} as its module.
+     * Instantiates a new simple EML executor that uses an {@link EtlModule} as its module.
      * @see EtlModule
      */
-    public SimpleEtlExecutor() {
-    	this(new EtlModule());	
+    public SimpleEmlExecutor() {
+    	this(new EtlModule());
     }
     
     /**
-    * Instantiates a new simple ETL executor that uses the provided {@link IEtlModule} as its module.
-    * @see IEtlModule
-    *
-    * @param mdl 					the module
-    */
-    public SimpleEtlExecutor(IEtlModule mdl) {
-    	logger.info("Creating the Etl Executor");
+     * Instantiates a new simple EML executor that uses the provided {@link IEtlModule} as its module.
+     * @see IEtlModule
+     *
+     * @param mdl 					the module
+     */
+    public SimpleEmlExecutor(IEtlModule mdl) {
+    	logger.info("Creating the EtlExecutor");
     	module = mdl;
     	delegate = new ModuleWrap(module);
     }
     
-
 	@Override
-	public TransformationTrace execute() throws EolRuntimeException {
-		return (TransformationTrace) module.execute();
+	public EmlTraces execute() throws EolRuntimeException {
+		module.execute();
+		EmlContext c = (EmlContext) module.getContext();
+		return new EmlTraces(c.getMatchTrace(), c.getMergeTrace());
 	}
 
 	@Override
@@ -94,6 +97,11 @@ public class SimpleEtlExecutor implements EpsilonLanguageExecutor<Transformation
 	}
 
 	@Override
+	public Optional<RuleProfiler> getRuleProfiler() {
+		return delegate.getRuleProfiler();
+	}
+
+	@Override
 	public void disposeModelRepository() {
 		delegate.disposeModelRepository();
 	}
@@ -109,13 +117,15 @@ public class SimpleEtlExecutor implements EpsilonLanguageExecutor<Transformation
 	}
 
 	@Override
-	public void preProcess() {
-
-	}
+	public void preProcess() {	}
 
 	@Override
-	public void postProcess() {
+	public void postProcess() {	}
 
+	@Override
+	public boolean equals(Object obj) {
+		return delegate.equals(obj);
 	}
+
 
 }
