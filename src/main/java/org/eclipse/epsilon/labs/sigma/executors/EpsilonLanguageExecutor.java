@@ -10,6 +10,7 @@
 package org.eclipse.epsilon.labs.sigma.executors;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -127,5 +128,31 @@ public interface EpsilonLanguageExecutor<R> {
 	 * @return the result of the execution
      */
     R execute() throws EolRuntimeException;
-   
+
+	/**
+	 * Change the output stream of the Executor. This will change the target of all the <code>print</code> and
+	 * <code>println</code> statements in the script/code.
+	 *
+	 * @param outputStream          the stream to redirect the output to
+	 * @since 2.1.0
+	 */
+	void redirectOutputStream(PrintStream outputStream);
+
+	/**
+	 * Change the output stream of the Executor. This will change the target of all the warning messages generated
+	 * by the engine.
+	 *
+	 * @param warningStream          the stream to redirect the output to
+	 * @since 2.1.0
+	 */
+	void redirectWarningStream(PrintStream warningStream);
+
+	/**
+	 * Change the output stream of the Executor. This will change the target of all the error messages generated
+	 * by the engine.
+	 *
+	 * @param errorStream          the stream to redirect the output to
+	 * @since 2.1.0
+	 */
+	void redirectErrorStream(PrintStream errorStream);
 }

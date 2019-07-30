@@ -10,6 +10,7 @@
 package org.eclipse.epsilon.labs.sigma.executors.evl;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -187,21 +188,29 @@ public class SimpleEvlExecutor implements EvlExecutor {
 	public void postProcess() {	}
 
 	@Override
+	public void redirectOutputStream(PrintStream outputStream) {
+		delegate.redirectOutputStream(outputStream);
+	}
+
+	@Override
+	public void redirectWarningStream(PrintStream warningStream) {
+		delegate.redirectWarningStream(warningStream);
+	}
+
+	@Override
+	public void redirectErrorStream(PrintStream errorStream) {
+		delegate.redirectErrorStream(errorStream);
+	}
+
+	@Override
 	public void logUnsatisfied(Collection<UnsatisfiedConstraint> unsatisfiedConstraints) {
 		int numUnsatisfied = unsatisfiedConstraints.size();
     	if (numUnsatisfied > 0) {
     		// Separate critiques from constraints
     		List<UnsatisfiedConstraint> consraints = new ArrayList<>();
     		List<UnsatisfiedConstraint> critiques = new ArrayList<>();
-    		unsatisfiedConstraints.stream()
-    				.forEach(uc -> {
-    					if (uc.getConstraint().isCritique()) {
-    						critiques.add(uc);
-    					} else {
-    						consraints.add(uc);}
-    					}
-    				);
-			logger.warn(String.format("There %s %s unsatisfied Constraint(s).",
+		    classifyUnsatisfiedConstraints(unsatisfiedConstraints, consraints, critiques);
+		    logger.warn(String.format("There %s %s unsatisfied Constraint(s).",
 					numUnsatisfied > 1 ? "were" : "was",
 					numUnsatisfied));
 			for (UnsatisfiedConstraint uc : unsatisfiedConstraints) {
@@ -217,7 +226,7 @@ public class SimpleEvlExecutor implements EvlExecutor {
 			logger.info("All constraints have been satisfied.");
 		}
 	}
-	
+
 	@Override
 	public void printUnsatisfied(Collection<UnsatisfiedConstraint> unsatisfiedConstraints) {
 		printUnsatisfied(unsatisfiedConstraints, new PrintWriter(System.out, true));	
@@ -230,15 +239,8 @@ public class SimpleEvlExecutor implements EvlExecutor {
     		// Separate critiques from constraints
     		List<UnsatisfiedConstraint> consraints = new ArrayList<>();
     		List<UnsatisfiedConstraint> critiques = new ArrayList<>();
-    		unsatisfiedConstraints.stream()
-    				.forEach(uc -> {
-    					if (uc.getConstraint().isCritique()) {
-    						critiques.add(uc);
-    					} else {
-    						consraints.add(uc);
-    					}
-    				});
-    		Optional<String> maxWidth = unsatisfiedConstraints.stream()
+		    classifyUnsatisfiedConstraints(unsatisfiedConstraints, consraints, critiques);
+		    Optional<String> maxWidth = unsatisfiedConstraints.stream()
     				.map(uc -> uc.getConstraint().getName())
     				.max(Comparator.comparingInt(String::length));
     		int tabDivision = maxWidth.orElse("        ").length();
@@ -270,6 +272,28 @@ public class SimpleEvlExecutor implements EvlExecutor {
 			writer.println(msg);
 			writer.println(division);
 		}
+	}
+
+	/**
+	 * Classify unsatisfied constraints into constraints and critiques
+	 *
+	 * @param unsatisfiedConstraints    the unsatisfied constraints to classify
+	 * @param contsraints               an array to place the constraints
+	 * @param critiques                 an array to place the critiques
+	 */
+	private void classifyUnsatisfiedConstraints(
+		final Collection<UnsatisfiedConstraint> unsatisfiedConstraints,
+		List<UnsatisfiedConstraint> contsraints,
+		List<UnsatisfiedConstraint> critiques) {
+		unsatisfiedConstraints.stream()
+				.forEach(uc -> {
+							if (uc.getConstraint().isCritique()) {
+								critiques.add(uc);
+							} else {
+								contsraints.add(uc);
+							}
+						}
+				);
 	}
 
 }

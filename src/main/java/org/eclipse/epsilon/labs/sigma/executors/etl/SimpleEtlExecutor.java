@@ -10,6 +10,7 @@
 package org.eclipse.epsilon.labs.sigma.executors.etl;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -120,5 +121,20 @@ public class SimpleEtlExecutor implements EpsilonLanguageExecutor<Transformation
 
 	@Override
 	public void postProcess() {	}
+
+	@Override
+	public void redirectOutputStream(PrintStream outputStream) {
+		delegate.redirectOutputStream(outputStream);
+	}
+
+	@Override
+	public void redirectWarningStream(PrintStream warningStream) {
+		delegate.redirectWarningStream(warningStream);
+	}
+
+	@Override
+	public void redirectErrorStream(PrintStream errorStream) {
+		delegate.redirectErrorStream(errorStream);
+	}
 
 }

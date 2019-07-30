@@ -11,6 +11,7 @@ package org.eclipse.epsilon.labs.sigma.executors;
 
 import org.eclipse.epsilon.labs.sigma.executors.util.ExecutionTimeData;
 
+import java.io.PrintStream;
 import java.util.Optional;
 
 /**
@@ -55,5 +56,35 @@ public interface Executor {
 	 * disposed (default true).
 	 */
 	void dispose();
+
+	/**
+	 * Change the output stream of the Executor. This will change the target of all the <code>print</code> and
+	 * <code>println</code> statements in the script/code.
+	 *
+	 * @param outputStream          the stream to redirect the output to
+	 * @return  a new Executor that uses the provided stream for output
+	 * @since 2.1.0
+	 */
+	Executor redirectOutputStream(PrintStream outputStream);
+
+	/**
+	 * Change the output stream of the Executor. This will change the target of all the warning messages generated
+	 * by the engine.
+	 *
+	 * @param warningStream          the stream to redirect the output to
+	 * @return  a new Executor that uses the provided stream for output
+	 * @since 2.1.0
+	 */
+	Executor redirectWarningStream(PrintStream warningStream);
+
+	/**
+	 * Change the output stream of the Executor. This will change the target of all the error messages generated
+	 * by the engine.
+	 *
+	 * @param errorStream          the stream to redirect the output to
+	 * @return  a new Executor that uses the provided stream for output
+	 * @since 2.1.0
+	 */
+	Executor redirectErrorStream(PrintStream errorStream);
 
 }

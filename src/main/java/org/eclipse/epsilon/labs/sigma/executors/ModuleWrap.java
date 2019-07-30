@@ -10,6 +10,7 @@
 package org.eclipse.epsilon.labs.sigma.executors;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.*;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
@@ -114,6 +115,22 @@ public class ModuleWrap implements EpsilonLanguageExecutor<Object> {
 	@Override
 	public Object execute() throws EolRuntimeException {
 		throw new UnsupportedOperationException("The ModuleWrap does not support the execute method.");
+	}
+
+	@Override
+	public void redirectOutputStream(PrintStream outputStream) {
+		module.getContext().setOutputStream(outputStream);
+	}
+
+	@Override
+	public void redirectWarningStream(PrintStream warningStream) {
+		module.getContext().setWarningStream(warningStream);
+	}
+
+	@Override
+	public void redirectErrorStream(PrintStream errorStream) {
+		module.getContext().setErrorStream(errorStream);
+
 	}
 
 }

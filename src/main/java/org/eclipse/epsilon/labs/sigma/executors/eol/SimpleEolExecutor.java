@@ -10,6 +10,7 @@
 package org.eclipse.epsilon.labs.sigma.executors.eol;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -194,5 +195,20 @@ public class SimpleEolExecutor implements EolExecutor {
 
 	@Override
 	public void postProcess() {	}
+
+	@Override
+	public void redirectOutputStream(PrintStream outputStream) {
+		delegate.redirectOutputStream(outputStream);
+	}
+
+	@Override
+	public void redirectWarningStream(PrintStream warningStream) {
+		delegate.redirectWarningStream(warningStream);
+	}
+
+	@Override
+	public void redirectErrorStream(PrintStream errorStream) {
+		delegate.redirectErrorStream(errorStream);
+	}
 
 }

@@ -10,6 +10,7 @@
 package org.eclipse.epsilon.labs.sigma.executors.eml;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -123,8 +124,18 @@ public class SimpleEmlExecutor implements EpsilonLanguageExecutor<EmlTraces> {
 	public void postProcess() {	}
 
 	@Override
-	public boolean equals(Object obj) {
-		return delegate.equals(obj);
+	public void redirectOutputStream(PrintStream outputStream) {
+		delegate.redirectOutputStream(outputStream);
+	}
+
+	@Override
+	public void redirectWarningStream(PrintStream warningStream) {
+		delegate.redirectWarningStream(warningStream);
+	}
+
+	@Override
+	public void redirectErrorStream(PrintStream errorStream) {
+		delegate.redirectErrorStream(errorStream);
 	}
 
 

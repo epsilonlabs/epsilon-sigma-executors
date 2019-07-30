@@ -9,6 +9,7 @@
 **********************************************************************/
 package org.eclipse.epsilon.labs.sigma.executors;
 
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
@@ -294,6 +295,24 @@ public class EpsilonExecutor implements Executor {
 		languageExecutor.dispose();
 	}
 
+	@Override
+	public Executor redirectOutputStream(PrintStream outputStream) {
+		this.languageExecutor.redirectOutputStream(outputStream);
+		return new EpsilonExecutor(languageExecutor, script, code, models, parameters, nativeDelegates, disposeModels, profileExecution);
+	}
+
+	@Override
+	public Executor redirectWarningStream(PrintStream warningStream) {
+		this.languageExecutor.redirectWarningStream(warningStream);
+		return new EpsilonExecutor(languageExecutor, script, code, models, parameters, nativeDelegates, disposeModels, profileExecution);
+	}
+
+	@Override
+	public Executor redirectErrorStream(PrintStream errorStream) {
+		this.languageExecutor.redirectErrorStream(errorStream);
+		return new EpsilonExecutor(languageExecutor, script, code, models, parameters, nativeDelegates, disposeModels, profileExecution);
+	}
+
 	/**
 	 * Start stage.
 	 *
@@ -315,9 +334,6 @@ public class EpsilonExecutor implements Executor {
 			timeData.endStage(stageName);
 		}
 	}
-
-
-
 
     /**
      * Pre profile.

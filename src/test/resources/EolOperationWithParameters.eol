@@ -1,0 +1,29 @@
+operation printHelloWorld() {
+    "Hello World".print();
+}
+
+operation printHelloWorldAndMessage(message: String) {
+    message.print("Hello World, ");
+}
+
+operation selfContained() {
+    2.println("selfContained ");
+}
+
+operation makeMoreExciting(message) {
+  return message + '!!!!';
+}
+
+operation yellIt(message) {
+  message = message.toUpperCase();
+  return makeMoreExciting(string);
+}
+
+operation godzilla() {
+    return yellIt("i fear no human");
+}
+
+
+godzilla();
+
+
