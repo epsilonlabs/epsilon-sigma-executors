@@ -10,14 +10,12 @@
 package org.eclipse.epsilon.labs.sigma.executors;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 import org.eclipse.epsilon.eol.IEolModule;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.execute.context.Variable;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
 import org.eclipse.epsilon.erl.IErlModule;
@@ -63,7 +61,16 @@ public class ModuleWrap implements EpsilonLanguageExecutor<Object> {
 
 	@Override
 	public void addParamters(Map<String, ?> parameters) {
-		this.module.getContext().getFrameStack().put(parameters, true);
+		Map<String, Variable> params = new HashMap<>(parameters.size());
+		for (Map.Entry<String, ?> entry : parameters.entrySet()) {
+			if (entry.getValue() instanceof Variable) {
+				params.put(entry.getKey(), (Variable) entry.getValue());
+			}
+			else {
+				params.put(entry.getKey(), Variable.createReadOnlyVariable(entry));
+			}
+		}
+		this.module.getContext().getFrameStack().put(params, true);
 	}
 
 	@Override

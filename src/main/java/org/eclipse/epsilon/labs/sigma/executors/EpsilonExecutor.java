@@ -9,7 +9,6 @@
 **********************************************************************/
 package org.eclipse.epsilon.labs.sigma.executors;
 
-
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,8 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Epsilon Executor is used to run the different Language executors. 
- * 
+ * The Epsilon Executor is used to run the different Language executors.
+ *
  * @author Horacio Hoyos Rodriguez
  *
  */
@@ -41,29 +40,29 @@ public class EpsilonExecutor implements Executor {
      * The Epsilon Module that implements the specific language engine.
      */
     private final EpsilonLanguageExecutor<?> languageExecutor;
-    
+
     /**
      * The Script to be executed. Alternatively a block of code can be provided, see {@link #code}.
      * If both are present, the Script takes priority.
      */
     private final Path script;
-    
+
     /**
      * The Code to be executed. Alternatively a script file can be provided, see {@link #script}.
      * If both are present, the Script takes priority
      */
     private final String code;
-    
+
     /**
      * The runtime parameters.
      */
     private final Map<String, Object> parameters; // = new HashMap<>(4);
-    
+
     /**
      * The Models used during execution.
      */
     private final Set<IModel> models; // = new HashSet<>(4);
-    
+
     /**
      * The Native Type delegates used during execution.
      */
@@ -78,12 +77,12 @@ public class EpsilonExecutor implements Executor {
      * The Profile Execution flag indicates if the execution should be measured.
      */
     private final boolean profileExecution; // = false;
-    
-    
+
+
     /** The time data. */
     private final ExecutionTimeData timeData;
-    	
-     	
+
+
 	/**
 	 * Instantiates a new epsilon executor.
 	 *
@@ -93,9 +92,9 @@ public class EpsilonExecutor implements Executor {
     public EpsilonExecutor(
         EpsilonLanguageExecutor<?> languageExecutor,
         Path scriptPath) {
-        this(languageExecutor, scriptPath, null, Collections.emptySet(), Collections.emptyMap(), Collections.emptySet(), true, false);    
+        this(languageExecutor, scriptPath, null, Collections.emptySet(), Collections.emptyMap(), Collections.emptySet(), true, false);
     }
-    
+
     /**
      * Instantiates a new epsilon executor.
      *
@@ -107,10 +106,10 @@ public class EpsilonExecutor implements Executor {
     	EpsilonLanguageExecutor<?> languageExecutor,
         Path scriptPath,
         Collection<IModel> models) {
-        this(languageExecutor, scriptPath, null, models, Collections.emptyMap(), Collections.emptySet(), true, false);    
+        this(languageExecutor, scriptPath, null, models, Collections.emptyMap(), Collections.emptySet(), true, false);
     }
-    
-        
+
+
 	/**
 	 * Instantiates a new epsilon executor.
 	 *
@@ -126,9 +125,9 @@ public class EpsilonExecutor implements Executor {
         Collection<IModel> models,
     	Map<String, Object> parameters,
 		Collection<IToolNativeTypeDelegate> nativeDelegates) {
-        this(languageExecutor, scriptPath, null, models, parameters, nativeDelegates, true, false);    
+        this(languageExecutor, scriptPath, null, models, parameters, nativeDelegates, true, false);
     }
-	
+
 	/**
 	 * Instantiates a new epsilon executor.
 	 *
@@ -138,9 +137,9 @@ public class EpsilonExecutor implements Executor {
     public EpsilonExecutor(
     	EpsilonLanguageExecutor<?> languageExecutor,
         String code) {
-        this(languageExecutor, null, code, Collections.emptySet(), Collections.emptyMap(), Collections.emptySet(), true, false);    
+        this(languageExecutor, null, code, Collections.emptySet(), Collections.emptyMap(), Collections.emptySet(), true, false);
     }
-    
+
     /**
      * Instantiates a new epsilon executor.
      *
@@ -152,9 +151,9 @@ public class EpsilonExecutor implements Executor {
     	EpsilonLanguageExecutor<?> languageExecutor,
         String code,
         Collection<IModel> models) {
-        this(languageExecutor, null, code, models, Collections.emptyMap(), Collections.emptySet(), true, false);    
+        this(languageExecutor, null, code, models, Collections.emptyMap(), Collections.emptySet(), true, false);
     }
-        
+
     /**
      * Instantiates a new epsilon executor.
      *
@@ -172,9 +171,10 @@ public class EpsilonExecutor implements Executor {
 		Collection<IToolNativeTypeDelegate> nativeDelegates) {
         this(languageExecutor, null, code, models, parameters, nativeDelegates, true, false);
     }
-    
+
     /**
-     * Instantiates a new epsilon executor.
+     * Instantiates a new epsilon executor with the given details. If both the script and code are given, only the script
+     * is used.
      *
      * @param languageExecutor 		the language executor
      * @param scriptPath 			the script path
@@ -205,14 +205,14 @@ public class EpsilonExecutor implements Executor {
     	this.profileExecution = profileExecution;
     	this.timeData = profileExecution ? new ExecutionTimeData() : null;
     }
-	   
+
 
 
 	@Override
 	public Optional<ExecutionTimeData> getExecutionTimeData() {
 		return Optional.ofNullable(timeData);
 	}
- 
+
     @Override
 	public <T> Runnable executeInThread() {
     	class OneShotTask implements Runnable {
@@ -268,7 +268,7 @@ public class EpsilonExecutor implements Executor {
         if (profileExecution) {
     		endStage("postProcess");
         }
-        
+
         if (profileExecution) {
         	if (timeData != null) {
         	timeData.endModule(languageExecutor);
@@ -293,7 +293,7 @@ public class EpsilonExecutor implements Executor {
 		logger.info("Dispose context");
 		languageExecutor.dispose();
 	}
-	
+
 	/**
 	 * Start stage.
 	 *
@@ -304,7 +304,7 @@ public class EpsilonExecutor implements Executor {
 			timeData.startStage(stageName);
 		}
 	}
-	
+
 	/**
 	 * End stage.
 	 *
@@ -315,10 +315,10 @@ public class EpsilonExecutor implements Executor {
 			timeData.endStage(stageName);
 		}
 	}
-    
 
 
-    
+
+
     /**
      * Pre profile.
      */
@@ -327,7 +327,7 @@ public class EpsilonExecutor implements Executor {
     		timeData.logStart();
     	}
     }
-    
+
     /**
      * Prepare execution.
      *
@@ -351,7 +351,7 @@ public class EpsilonExecutor implements Executor {
     		endStage("prepareExecution");
         }
     }
-	
+
 	/**
 	 * Parses the source.
 	 *
