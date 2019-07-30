@@ -99,8 +99,8 @@ public class SimpleEglExecutor implements EpsilonLanguageExecutor<Optional<Strin
 	}
 
 	@Override
-	public void addParamters(Map<String, ?> parameters) {
-		delegate.addParamters(parameters);
+	public void addParameters(Map<String, ?> parameters) {
+		delegate.addParameters(parameters);
 	}
 
 	@Override

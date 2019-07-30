@@ -160,8 +160,8 @@ public class SimpleEolExecutor implements EolExecutor {
 	}
 
 	@Override
-	public void addParamters(Map<String, ?> parameters) {
-		delegate.addParamters(parameters);
+	public void addParameters(Map<String, ?> parameters) {
+		delegate.addParameters(parameters);
 	}
 
 	@Override

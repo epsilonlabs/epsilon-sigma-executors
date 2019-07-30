@@ -343,7 +343,7 @@ public class EpsilonExecutor implements Executor {
         logger.info("Adding models to executor");
 		languageExecutor.addModels(models);
 		logger.info("Adding parameters to context.");
-		languageExecutor.addParamters(parameters);
+		languageExecutor.addParameters(parameters);
 
 		logger.info("Adding Native Type Delegates");
 		languageExecutor.addNativeTypeDelegates(nativeDelegates);

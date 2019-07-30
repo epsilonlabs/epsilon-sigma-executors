@@ -75,7 +75,7 @@ public interface EpsilonLanguageExecutor<R> {
 	 * by which the parameter can be identified in the program, and the value is any Object.
 	 * @param parameters			a Map of key:value pairs.
 	 */
-	void addParamters(final Map<String, ?> parameters);
+	void addParameters(final Map<String, ?> parameters);
 	
 	/**
 	 * Add any required NativeTypeDelegates. Native type delegates allow Java classes to be directly

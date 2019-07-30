@@ -60,7 +60,7 @@ public class ModuleWrap implements EpsilonLanguageExecutor<Object> {
 	}
 
 	@Override
-	public void addParamters(Map<String, ?> parameters) {
+	public void addParameters(Map<String, ?> parameters) {
 		Map<String, Variable> params = new HashMap<>(parameters.size());
 		for (Map.Entry<String, ?> entry : parameters.entrySet()) {
 			if (entry.getValue() instanceof Variable) {
