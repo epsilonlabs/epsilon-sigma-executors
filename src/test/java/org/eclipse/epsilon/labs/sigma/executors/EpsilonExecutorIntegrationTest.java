@@ -2,18 +2,14 @@ package org.eclipse.epsilon.labs.sigma.executors;
 
 import org.eclipse.epsilon.labs.sigma.executors.eol.EolExecutor;
 import org.eclipse.epsilon.labs.sigma.executors.eol.SimpleEolExecutor;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("integration")
 class EpsilonExecutorIntegrationTest {
 
 	private ByteArrayOutputStream baos;
