@@ -253,9 +253,6 @@
         </plugins>
       </build>
     </profile>
-
-
-
     <profile>
       <!-- Use this profile to deploy to a local nexus server (this assumes a "standard" nexus configuration -->
       <id>local</id>
@@ -301,8 +298,5 @@
         </plugins>
       </build>
     </profile>
-
-
-
   </profiles>
 </project>
