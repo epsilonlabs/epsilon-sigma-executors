@@ -147,19 +147,19 @@ workflows:
             - rc
   develop:
     jobs:
-      - develop
-        filters:
-          branches:
-            only:
-              - develop
+      - develop:
+          filters:
+            branches:
+              only:
+                - develop
       - deploy:
           requries:
             - develop
 
   release:
     jobs:
-      - tag
-          filters
+      - tag:
+          filters:
             tags:
               only: /^v.*/
       - deploy:
