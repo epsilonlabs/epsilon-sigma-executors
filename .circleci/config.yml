@@ -70,7 +70,7 @@ jobs:
           paths:
             - ~/.m2
 
-      - run: mvn clean package -P unit-tests,integration-tests,sources,javadocs
+      - run: mvn clean package -P unit-tests,integration-tests,sources
 
       - slack/status:
           fail_only: true
@@ -93,7 +93,7 @@ jobs:
           paths:
             - ~/.m2
 
-      - run: mvn clean package -P sources,javadocs
+      - run: mvn clean package -P sources,javadoc
 
       - slack/status:
           fail_only: true
@@ -116,7 +116,7 @@ jobs:
 
       - run: echo -e $GPG_KEY | gpg --import --no-tty --batch --yes
 
-      - run: mvn deploy -s .circleci/settings.xml -DskipTest=true
+      - run: mvn deploy -s .circleci/settings.xml -P sources,javadoc -DskipTest=true
 
       - slack/status:
           only_for_branches: develop,master
@@ -167,4 +167,8 @@ workflows:
       - deploy:
           requires:
             - tag
-
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/

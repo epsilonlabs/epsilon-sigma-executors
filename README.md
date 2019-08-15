@@ -6,13 +6,11 @@
 Epsilon executors aim to provide an easy API for executing [Epsilon](https://www.eclipse.org/epsilon/) scripts in non-eclipse environments. The executors API allows users to easily configure the execution environment (i.e. input/output models, external parameters, etc.) required for executing the script. 
 
 
-
-
 ## Supported versions
 
 epsilon-sigma-executors | Epsilon   | 
 ------------------------|-----------|
-2.0.0                   | 1.6.x     |
+2.0.0+                  | 1.6.x     |
 1.0.0                   | 1.5.x     |
 
 
@@ -28,33 +26,37 @@ Using your prefered dependency manager:
 	<dependency>
    		<groupId>org.eclipse.epsilon.labs/groupId>
 		<artifactId>epsilon-sigma-executors</artifactId>
-		<version>2.0.0</version>
+		<version>2.0.0</version><!--bump-->
 	</dependency>
 </dependencies>
 ```
+
+For other managers, change the version to the correct one:
+
 ### Apache Ivy
+
 ```
-<dependency org="org.eclipse.epsilon.labs" name="epsilon-sigma-executors" rev="2.0.0" />
+<dependency org="org.eclipse.epsilon.labs" name="epsilon-sigma-executors" rev="xxx" />
 ```
 
 ### Groovy Grape
+
 ```
 @Grapes( 
-@Grab(group='org.eclipse.epsilon.labs', module='epsilon-sigma-executors', version='2.0.0') 
+@Grab(group='org.eclipse.epsilon.labs', module='epsilon-sigma-executors', version='xxx') 
 )
 ```
+
 ### Gradle/Grails
 
 ```
-compile 'org.eclipse.epsilon.labs:epsilon-sigma-executors:2.0.0'
+compile 'org.eclipse.epsilon.labs:epsilon-sigma-executors:xxx'
 ```
 
 ### Manually
 
-Alternativly, you can download and add the jars manually to your project. You can finde the executable, sources and javadoc jars here:
+Alternatively, you can download and add the jars manually to your project. You can find the executable, sources and javadoc jars here: `http://repo1.maven.org/maven2/org/eclipse/epsilon/labs/epsilon-sigma-executors/`
 
-```
-http://repo1.maven.org/maven2/org/eclipse/epsilon/labs/epsilon-sigma-executors/2.0.0/```
 
 ### Snapshots
 

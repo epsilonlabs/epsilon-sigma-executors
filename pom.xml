@@ -208,7 +208,7 @@
     </profile>
     <profile>
       <!-- This profile is used by for deployment to OSSRH -->
-      <id>deploy</id>
+      <id>ossrh</id>
       <distributionManagement>
         <snapshotRepository>
           <id>ossrh</id>
