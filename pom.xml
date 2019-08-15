@@ -53,17 +53,6 @@
     <url>https://github.com/epsilonlabs/epsilon-sigma-executors/issues</url>
   </issueManagement>
 
-  <repositories>
-    <repository>
-      <id>oss-sonatype</id>
-      <name>oss-sonatype</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <properties>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -71,7 +60,6 @@
     <epsilon.version>1.6.0-SNAPSHOT</epsilon.version>
     <slf4j.version>1.7.25</slf4j.version>
   </properties>
-
 
   <dependencies>
     <dependency>

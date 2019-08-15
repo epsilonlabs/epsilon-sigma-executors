@@ -25,6 +25,6 @@
     </profiles>
 
     <activeProfiles>
-        <activeProfile>deploy</activeProfile>
+        <activeProfile>ossrh</activeProfile>
     </activeProfiles>
 </settings>
