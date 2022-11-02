@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  slack: cimg/slack@3.2.0
+  slack: circleci/slack@4.10.1
 
 executors:
   jdk-8:
