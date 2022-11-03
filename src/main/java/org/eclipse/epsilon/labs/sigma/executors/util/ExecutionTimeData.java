@@ -9,8 +9,9 @@
  **********************************************************************/
 package org.eclipse.epsilon.labs.sigma.executors.util;
 
+import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.erl.dom.NamedRule;
-import org.eclipse.epsilon.erl.execute.RuleProfiler;
+import org.eclipse.epsilon.erl.execute.control.RuleProfiler;
 import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class ExecutionTimeData {
 	private static final Logger logger = LoggerFactory.getLogger(ExecutionTimeData.class);
 
 	/** The log messages separator. */
-	private static String logMessagesSeparator = "-----------------------------------------------------";
+	private static final String logMessagesSeparator = "-----------------------------------------------------";
 
 	/** The os name and version. */
 	private final String osNameAndVersion;
@@ -61,13 +62,13 @@ public class ExecutionTimeData {
 	/**
 	 * The measured execution information.
 	 */
-	private Map<String, Duration> profiledStages = new HashMap<>();
+	private final Map<String, Duration> profiledStages = new HashMap<>();
 
 	/** The profiled rules. */
-	private Map<String, Duration> profiledRules = new HashMap<>();
+	private final Map<String, Duration> profiledRules = new HashMap<>();
 
 	/** The started. */
-	private Map<String, Long> started = new HashMap<>();
+	private final Map<String, Long> started = new HashMap<>();
 
 	/** The duration. */
 	private Duration duration;
@@ -161,10 +162,13 @@ public class ExecutionTimeData {
 	public void endModule(EpsilonLanguageExecutor<?> languageExecutor) {
 		Optional<RuleProfiler> ruleProfiler = languageExecutor.getRuleProfiler();
 		if(ruleProfiler.isPresent()) {
-			for (Map.Entry<NamedRule, Duration> entry : ruleProfiler.get().getExecutionTimes().entrySet()) {
-				Duration oldValue = profiledRules.put(entry.getKey().getName(), entry.getValue());
-				if (oldValue != null) {
-					System.err.println("Value for rule " + entry.getKey().getName() + " was replaced.");
+			for (Map.Entry<ModuleElement, Duration> entry : ruleProfiler.get().getExecutionTimes().entrySet()) {
+				if (entry.getKey() instanceof NamedRule) {
+					NamedRule rule = (NamedRule) entry.getKey();
+					Duration oldValue = profiledRules.put(rule.getName(), entry.getValue());
+					if (oldValue != null) {
+						System.err.println("Value for rule " + rule.getName() + " was replaced.");
+					}
 				}
 			}
 		}

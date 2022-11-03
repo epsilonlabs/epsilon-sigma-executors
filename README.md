@@ -10,7 +10,7 @@ Epsilon executors aim to provide an easy API for executing [Epsilon](https://www
 
 epsilon-sigma-executors | Epsilon   | 
 ------------------------|-----------|
-2.0.0+                  | 1.6.x     |
+2.0.0+                  | 2.0.0     |
 1.0.0                   | 1.5.x     |
 
 

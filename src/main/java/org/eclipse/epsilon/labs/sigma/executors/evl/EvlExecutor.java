@@ -12,7 +12,6 @@ package org.eclipse.epsilon.labs.sigma.executors.evl;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
@@ -77,6 +76,6 @@ public interface EvlExecutor extends EpsilonLanguageExecutor<Collection<Unsatisf
 	 *
 	 * @return the unsatisfied constraints
 	 */
-	Set<UnsatisfiedConstraint> getUnsatisfiedConstraints();
+	Collection<UnsatisfiedConstraint> getUnsatisfiedConstraints();
     
 }

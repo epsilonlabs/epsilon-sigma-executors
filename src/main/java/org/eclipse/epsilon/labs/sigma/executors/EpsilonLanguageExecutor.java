@@ -20,7 +20,7 @@ import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
-import org.eclipse.epsilon.erl.execute.RuleProfiler;
+import org.eclipse.epsilon.erl.execute.control.RuleProfiler;
 
 /**
  * The IEpsilonLanguageExecutor defines a common executor API that the different Epsilon languages 

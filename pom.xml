@@ -57,8 +57,10 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <epsilon.version>1.6.0-SNAPSHOT</epsilon.version>
-    <slf4j.version>1.7.25</slf4j.version>
+    <epsilon.version>2.0.0</epsilon.version>
+    <slf4j.version>2.0.3</slf4j.version>
+    <antlr.version>3.5.2</antlr.version>
+    <junit.version>5.5.1</junit.version>
   </properties>
 
   <dependencies>
@@ -69,24 +71,49 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.epsilon</groupId>
-      <artifactId>epsilon-core</artifactId>
+      <artifactId>org.eclipse.epsilon.ecl.engine</artifactId>
+      <version>${epsilon.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.epsilon</groupId>
+      <artifactId>org.eclipse.epsilon.egl.engine</artifactId>
+      <version>${epsilon.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.epsilon</groupId>
+      <artifactId>org.eclipse.epsilon.eml.engine</artifactId>
+      <version>${epsilon.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.epsilon</groupId>
+      <artifactId>org.eclipse.epsilon.eol.engine</artifactId>
+      <version>${epsilon.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.epsilon</groupId>
+      <artifactId>org.eclipse.epsilon.etl.engine</artifactId>
+      <version>${epsilon.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.epsilon</groupId>
+      <artifactId>org.eclipse.epsilon.evl.engine</artifactId>
       <version>${epsilon.version}</version>
     </dependency>
     <dependency>
       <groupId>org.antlr</groupId>
       <artifactId>antlr-runtime</artifactId>
-      <version>3.5.2</version>
+      <version>${antlr.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.5.1</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.5.1</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

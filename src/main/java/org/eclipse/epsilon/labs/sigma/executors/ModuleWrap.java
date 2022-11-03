@@ -13,14 +13,16 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.*;
 
+import org.antlr.tool.Rule;
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 import org.eclipse.epsilon.eol.IEolModule;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.Variable;
+import org.eclipse.epsilon.eol.execute.control.ExecutionController;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
 import org.eclipse.epsilon.erl.IErlModule;
-import org.eclipse.epsilon.erl.execute.RuleProfiler;
+import org.eclipse.epsilon.erl.execute.control.RuleProfiler;
 
 /**
  * This implementation of EpsilonLanguageExecutor that provides a proxy into the IEolModule methods
@@ -82,7 +84,10 @@ public class ModuleWrap implements EpsilonLanguageExecutor<Object> {
 	@Override
 	public Optional<RuleProfiler> getRuleProfiler() {
 		if (module instanceof IErlModule) {
-			return Optional.of(((IErlModule)module).getContext().getExecutorFactory().getRuleProfiler());
+			final ExecutionController executionController = ((IErlModule) module).getContext().getExecutorFactory().getExecutionController();
+			if (executionController instanceof RuleProfiler) {
+				return Optional.of((RuleProfiler) executionController);
+			}
 		}
 		return Optional.empty();
 	}

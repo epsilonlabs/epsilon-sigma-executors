@@ -22,9 +22,10 @@ import org.eclipse.epsilon.eol.IEolModule;
 import org.eclipse.epsilon.eol.concurrent.EolModuleParallel;
 import org.eclipse.epsilon.eol.dom.Operation;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
+import org.eclipse.epsilon.eol.execute.context.concurrent.EolContextParallel;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
-import org.eclipse.epsilon.erl.execute.RuleProfiler;
+import org.eclipse.epsilon.erl.execute.control.RuleProfiler;
 import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,7 +93,7 @@ public class SimpleEolExecutor implements EolExecutor {
 	 * @param nmbrThrds 			the number of threads
 	 */
 	public SimpleEolExecutor(String oprtnNm, List<Object> argmnts, int nmbrThrds) {
-		this(oprtnNm, argmnts, new EolModuleParallel(nmbrThrds));
+		this(oprtnNm, argmnts, new EolModuleParallel(new EolContextParallel(nmbrThrds)));
 	}
 	
 	/**

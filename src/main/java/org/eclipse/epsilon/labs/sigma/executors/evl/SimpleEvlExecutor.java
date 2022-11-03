@@ -18,13 +18,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
-import org.eclipse.epsilon.erl.execute.RuleProfiler;
+import org.eclipse.epsilon.erl.execute.control.RuleProfiler;
 import org.eclipse.epsilon.evl.EvlModule;
 import org.eclipse.epsilon.evl.IEvlFixer;
 import org.eclipse.epsilon.evl.IEvlModule;
@@ -33,6 +32,7 @@ import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.execute.CommandLineFixer;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
+import org.eclipse.epsilon.evl.execute.context.concurrent.EvlContextParallel;
 import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,10 +62,10 @@ public class SimpleEvlExecutor implements EvlExecutor {
 	 * Instantiates a new simple EVL executor that uses an {@link EvlModuleParallelElements} as its
 	 * module, with the provided number of threads.
 	 *
-	 * @param parallelism 			the parallelism to use
+	 * @param numThreads 			the number of threads to use
 	 */
-	public SimpleEvlExecutor(int parallelism) {
-		this(new EvlModuleParallelElements(parallelism), new CommandLineFixer());
+	public SimpleEvlExecutor(int numThreads) {
+		this(new EvlModuleParallelElements(new EvlContextParallel(numThreads)), new CommandLineFixer());
     }
 	
 	/**
@@ -83,11 +83,11 @@ public class SimpleEvlExecutor implements EvlExecutor {
 	 * module and the provided {@link IEvlFixer} as a constraint fixer, with the provided number of
 	 * threads.
 	 *
-	 * @param parallelism 			the parallelism o use
+	 * @param numThreads 			the number of threads to use
 	 * @param evlFixer 				the fixer to use
 	 */
-	public SimpleEvlExecutor(int parallelism, IEvlFixer evlFixer) {
-		this(new EvlModuleParallelElements(parallelism), evlFixer);
+	public SimpleEvlExecutor(int numThreads, IEvlFixer evlFixer) {
+		this(new EvlModuleParallelElements(new EvlContextParallel(numThreads)), evlFixer);
     }
     
 	/**
@@ -101,9 +101,7 @@ public class SimpleEvlExecutor implements EvlExecutor {
 		logger.info("Creating the EvlExecutor");
 		module = mdl;
 		delegate = new ModuleWrap(module);
-		if (module.getUnsatisfiedConstraintFixer() == null) {
-			
-		}
+		module.setUnsatisfiedConstraintFixer(evlFixer);
 	}
     
 	@Override
@@ -127,7 +125,7 @@ public class SimpleEvlExecutor implements EvlExecutor {
 	}
 	
 	@Override
-	public Set<UnsatisfiedConstraint> getUnsatisfiedConstraints() {
+	public Collection<UnsatisfiedConstraint> getUnsatisfiedConstraints() {
 		return module.getContext().getUnsatisfiedConstraints();
 	}
 
