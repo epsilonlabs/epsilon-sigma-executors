@@ -27,10 +27,11 @@ jobs:
       - run: mvn clean package -P branches,unit-tests
 
       - slack/notify:
-          fail_only: true
-          success_message: Branch passes compile + unit-tests
-          failure_message: Branch failed compile + unit-tests
-          webhook: https://hooks.slack.com/services/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
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: basic_success_1
 
   develop:
     executor: jdk-8
@@ -50,10 +51,11 @@ jobs:
       - run: mvn clean package -P unit-tests,sources
 
       - slack/notify:
-          fail_only: true
-          success_message: New development version built
-          failure_message: Error on develop branch build
-          webhook: https://hooks.slack.com/services/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
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: basic_success_1
 
   rc:
     executor: jdk-8
@@ -73,10 +75,11 @@ jobs:
       - run: mvn clean package -P unit-tests,integration-tests,sources
 
       - slack/notify:
-          fail_only: true
-          success_message: Release candidate built
-          failure_message: Error on release candidate build
-          webhook: https://hooks.slack.com/services/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
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: basic_success_1
 
   tag:
     executor: jdk-8
@@ -96,10 +99,11 @@ jobs:
       - run: mvn clean package -P sources,javadoc
 
       - slack/notify:
-          fail_only: true
-          success_message: New development version built
-          failure_message: Error on develop branch build
-          webhook: https://hooks.slack.com/services/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
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: basic_success_1
 
   deploy:
     executor: jdk-8
@@ -119,10 +123,11 @@ jobs:
       - run: mvn deploy -s .circleci/settings.xml -P sources,javadoc -DskipTest=true
 
       - slack/notify:
-          only_for_branches: develop,master
-          success_message: New version deployed
-          failure_message: Error deploying new version
-          webhook: https://hooks.slack.com/services/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
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: basic_success_1
 
 workflows:
   version: 2
