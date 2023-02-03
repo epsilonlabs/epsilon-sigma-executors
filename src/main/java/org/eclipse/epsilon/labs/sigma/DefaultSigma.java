@@ -7,7 +7,7 @@
 *
 * SPDX-License-Identifier: EPL-2.0
 **********************************************************************/
-package org.eclipse.epsilon.labs.sigma.executors;
+package org.eclipse.epsilon.labs.sigma;
 
 import java.io.PrintStream;
 import java.nio.file.Path;
@@ -22,25 +22,30 @@ import org.eclipse.epsilon.common.parse.problem.ParseProblem;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonExecutorException;
+import org.eclipse.epsilon.labs.sigma.executors.LanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.Sigma;
 import org.eclipse.epsilon.labs.sigma.executors.util.ExecutionTimeData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Epsilon Executor is used to run the different Language executors.
+ * The Epsilon {@link Sigma} implementation is used to run a specific language
+ * executors.
  *
+ * @see org.eclipse.epsilon.labs.sigma.executors.eol.EolExecutor
  * @author Horacio Hoyos Rodriguez
  *
  */
-public class EpsilonExecutor implements Executor {
+public class DefaultSigma implements Sigma {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory.getLogger(EpsilonExecutor.class);
+	private static final Logger logger = LoggerFactory.getLogger(DefaultSigma.class);
 
     /**
      * The Epsilon Module that implements the specific language engine.
      */
-    private final EpsilonLanguageExecutor<?> languageExecutor;
+    private final LanguageExecutor<?> languageExecutor;
 
     /**
      * The Script to be executed. Alternatively a block of code can be provided, see {@link #code}.
@@ -90,8 +95,8 @@ public class EpsilonExecutor implements Executor {
 	 * @param languageExecutor 		the language executor
 	 * @param scriptPath 			the script path
 	 */
-    public EpsilonExecutor(
-        EpsilonLanguageExecutor<?> languageExecutor,
+    public DefaultSigma(
+        LanguageExecutor<?> languageExecutor,
         Path scriptPath) {
         this(languageExecutor, scriptPath, null, Collections.emptySet(), Collections.emptyMap(), Collections.emptySet(), true, false);
     }
@@ -103,8 +108,8 @@ public class EpsilonExecutor implements Executor {
      * @param scriptPath		 	the script path
      * @param models 				the models to run the script against
      */
-    public EpsilonExecutor(
-    	EpsilonLanguageExecutor<?> languageExecutor,
+    public DefaultSigma(
+    	LanguageExecutor<?> languageExecutor,
         Path scriptPath,
         Collection<IModel> models) {
         this(languageExecutor, scriptPath, null, models, Collections.emptyMap(), Collections.emptySet(), true, false);
@@ -120,8 +125,8 @@ public class EpsilonExecutor implements Executor {
 	 * @param parameters 			parameters to pass to the execution
 	 * @param nativeDelegates 		the native delegates required for execution
 	 */
-	public EpsilonExecutor(
-		EpsilonLanguageExecutor<?> languageExecutor,
+	public DefaultSigma(
+		LanguageExecutor<?> languageExecutor,
 	    Path scriptPath,
         Collection<IModel> models,
     	Map<String, Object> parameters,
@@ -135,8 +140,8 @@ public class EpsilonExecutor implements Executor {
 	 * @param languageExecutor 		the language executor
 	 * @param code 					the code to execute
 	 */
-    public EpsilonExecutor(
-    	EpsilonLanguageExecutor<?> languageExecutor,
+    public DefaultSigma(
+    	LanguageExecutor<?> languageExecutor,
         String code) {
         this(languageExecutor, null, code, Collections.emptySet(), Collections.emptyMap(), Collections.emptySet(), true, false);
     }
@@ -148,8 +153,8 @@ public class EpsilonExecutor implements Executor {
      * @param code	 				the code to execute
      * @param models 				the models to run the code against
      */
-    public EpsilonExecutor(
-    	EpsilonLanguageExecutor<?> languageExecutor,
+    public DefaultSigma(
+    	LanguageExecutor<?> languageExecutor,
         String code,
         Collection<IModel> models) {
         this(languageExecutor, null, code, models, Collections.emptyMap(), Collections.emptySet(), true, false);
@@ -164,8 +169,8 @@ public class EpsilonExecutor implements Executor {
 	 * @param parameters 			parameters to pass to the execution
 	 * @param nativeDelegates 		the native delegates required for execution
      */
-    public EpsilonExecutor(
-    	EpsilonLanguageExecutor<?> languageExecutor,
+    public DefaultSigma(
+    	LanguageExecutor<?> languageExecutor,
         String code,
         Collection<IModel> models,
     	Map<String, Object> parameters,
@@ -186,8 +191,8 @@ public class EpsilonExecutor implements Executor {
 	 * @param disposeModels 		the dispose models flag, if true models are disposed after execution
      * @param profileExecution 		the profile execution flag
      */
-    public EpsilonExecutor(
-       	EpsilonLanguageExecutor<?> languageExecutor,
+    public DefaultSigma(
+       	LanguageExecutor<?> languageExecutor,
         Path scriptPath,
         String code,
         Collection<IModel> models,
@@ -215,25 +220,40 @@ public class EpsilonExecutor implements Executor {
 	}
 
     @Override
-	public <T> Runnable executeInThread() {
-    	class OneShotTask implements Runnable {
-    		private T result;
+	public <T> SigmaRunnable runInThread() {
+    	class SigmaOneShot implements SigmaRunnable {
+
             public void run() {
             	try {
-					result = invokeExecutor();
+					result = DefaultSigma.this.run();
+					completed = true;
 				} catch (EpsilonExecutorException e) {
-					throw new RuntimeException(e);
+					exception = e;
 				}
             }
-            @SuppressWarnings("unused")
+
+			@Override
+		    public boolean completed() {
+			    return this.completed;
+		    }
+
+		    @Override
+		    public Optional<Exception> exception() {
+			    return Optional.ofNullable(this.exception);
+		    }
+
+            @Override
 			public T getResult() { return result;}
-        }
-		return new OneShotTask();
+		    private T result;
+			private boolean completed = false;
+			private Exception exception = null;
+	    }
+		return new SigmaOneShot();
     }
 
     @Override
 	@SuppressWarnings("unchecked")
-	public <R> R invokeExecutor() throws EpsilonExecutorException {
+	public <R> R run() throws EpsilonExecutorException {
         logger.info("Executing engine.");
         preProfile();
         prepareExecution();
@@ -296,21 +316,21 @@ public class EpsilonExecutor implements Executor {
 	}
 
 	@Override
-	public Executor redirectOutputStream(PrintStream outputStream) {
+	public Sigma redirectOutputStream(PrintStream outputStream) {
 		this.languageExecutor.redirectOutputStream(outputStream);
-		return new EpsilonExecutor(languageExecutor, script, code, models, parameters, nativeDelegates, disposeModels, profileExecution);
+		return new DefaultSigma(languageExecutor, script, code, models, parameters, nativeDelegates, disposeModels, profileExecution);
 	}
 
 	@Override
-	public Executor redirectWarningStream(PrintStream warningStream) {
+	public Sigma redirectWarningStream(PrintStream warningStream) {
 		this.languageExecutor.redirectWarningStream(warningStream);
-		return new EpsilonExecutor(languageExecutor, script, code, models, parameters, nativeDelegates, disposeModels, profileExecution);
+		return new DefaultSigma(languageExecutor, script, code, models, parameters, nativeDelegates, disposeModels, profileExecution);
 	}
 
 	@Override
-	public Executor redirectErrorStream(PrintStream errorStream) {
+	public Sigma redirectErrorStream(PrintStream errorStream) {
 		this.languageExecutor.redirectErrorStream(errorStream);
-		return new EpsilonExecutor(languageExecutor, script, code, models, parameters, nativeDelegates, disposeModels, profileExecution);
+		return new DefaultSigma(languageExecutor, script, code, models, parameters, nativeDelegates, disposeModels, profileExecution);
 	}
 
 	/**
@@ -377,10 +397,10 @@ public class EpsilonExecutor implements Executor {
 		// Think this should be part of constructor, so object is correct at construction
 	  try {
 	  	if (script != null) {
-	  		languageExecutor.parse(script.toFile());
+	  		languageExecutor.parsed(script.toFile());
 	      }
 	      else {
-	      	languageExecutor.parse(code);
+	      	languageExecutor.parsed(code);
 	      }
 	  }
 	  catch (Exception e) {
@@ -388,10 +408,10 @@ public class EpsilonExecutor implements Executor {
 	      logger.error("Failed to parse provided {}", culprit, e);
 	      throw new EpsilonExecutorException("Failed to parse script or code", e);
 	  }
-	  if (!languageExecutor.getParseProblems().isEmpty()) {
+	  if (!languageExecutor.parseProblems().isEmpty()) {
 	      logger.error("Parse errors occurred");
 			System.err.println("Parse errors occurred...");
-			for (ParseProblem problem : languageExecutor.getParseProblems()) {
+			for (ParseProblem problem : languageExecutor.parseProblems()) {
 				System.err.println(problem);
 			}
 	      throw new EpsilonExecutorException("Parse errors occurred.");

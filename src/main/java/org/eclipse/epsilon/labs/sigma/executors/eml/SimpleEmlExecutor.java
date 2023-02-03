@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.epsilon.common.parse.problem.ParseProblem;
+import org.eclipse.epsilon.ecl.IEclModule;
+import org.eclipse.epsilon.ecl.trace.MatchTrace;
 import org.eclipse.epsilon.eml.execute.context.EmlContext;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
@@ -24,8 +26,10 @@ import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
 import org.eclipse.epsilon.erl.execute.control.RuleProfiler;
 import org.eclipse.epsilon.etl.EtlModule;
 import org.eclipse.epsilon.etl.IEtlModule;
-import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonExecutorException;
+import org.eclipse.epsilon.labs.sigma.executors.LanguageExecutor;
 import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
+import org.eclipse.epsilon.labs.sigma.executors.ecl.SimpleEclExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,11 +38,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Horacio Hoyos Rodriguez
  */
-public class SimpleEmlExecutor implements EpsilonLanguageExecutor<EmlTraces> {
-
-    private static final Logger logger = LoggerFactory.getLogger(SimpleEmlExecutor.class);
-	private IEtlModule module;
-	private ModuleWrap delegate;
+public class SimpleEmlExecutor implements LanguageExecutor<EmlTraces> {
 	
     /**
      * Instantiates a new simple EML executor that uses an {@link EtlModule} as its module.
@@ -57,7 +57,7 @@ public class SimpleEmlExecutor implements EpsilonLanguageExecutor<EmlTraces> {
     public SimpleEmlExecutor(IEtlModule mdl) {
     	logger.info("Creating the EtlExecutor");
     	module = mdl;
-    	delegate = new ModuleWrap(module);
+    	delegate = new ModuleWrap<>(module);
     }
     
 	@Override
@@ -68,18 +68,20 @@ public class SimpleEmlExecutor implements EpsilonLanguageExecutor<EmlTraces> {
 	}
 
 	@Override
-	public boolean parse(File file) throws Exception {
-		return delegate.parse(file);
+	public LanguageExecutor<EmlTraces> parsed(File file) throws EpsilonExecutorException {
+		logger.info("Parsing EML file at {}", file.getAbsolutePath());
+		return new SimpleEmlExecutor(this.module, this.delegate.parsed(file));
 	}
 
 	@Override
-	public boolean parse(String code) throws Exception {
-		return delegate.parse(code);
+	public LanguageExecutor<EmlTraces> parsed(String code) throws EpsilonExecutorException {
+		logger.info("Parsing EML code <{}...> ", code.substring(0, 100));
+		return new SimpleEmlExecutor(this.module, this.delegate.parsed(code));
 	}
 
 	@Override
-	public List<ParseProblem> getParseProblems() {
-		return delegate.getParseProblems();
+	public List<ParseProblem> parseProblems() {
+		return delegate.parseProblems();
 	}
 
 	@Override
@@ -138,5 +140,11 @@ public class SimpleEmlExecutor implements EpsilonLanguageExecutor<EmlTraces> {
 		delegate.redirectErrorStream(errorStream);
 	}
 
-
+	private static final Logger logger = LoggerFactory.getLogger(SimpleEmlExecutor.class);
+	private IEtlModule module;
+	private final LanguageExecutor<EmlTraces> delegate;
+	private SimpleEmlExecutor(IEtlModule mdl, LanguageExecutor<EmlTraces> delegate) {
+		this.module = mdl;
+		this.delegate = delegate;
+	}
 }

@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.epsilon.evl.dom.Constraint;
 import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
-import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.LanguageExecutor;
 
 /**
  * The IEvlExecutor API provides additional methods retrieve and print the validation results.
@@ -24,7 +24,7 @@ import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
  * @author Horacio Hoyos Rodriguez
  * 
  */
-public interface EvlExecutor extends EpsilonLanguageExecutor<Collection<UnsatisfiedConstraint>> {
+public interface EvlExecutor extends LanguageExecutor<Collection<UnsatisfiedConstraint>> {
     
     /**
      * Send the unsatisfied constraints to the log, using the implementation logger.

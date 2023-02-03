@@ -24,7 +24,8 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
 import org.eclipse.epsilon.erl.execute.control.RuleProfiler;
-import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonExecutorException;
+import org.eclipse.epsilon.labs.sigma.executors.LanguageExecutor;
 import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +35,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Sina Madani
  */
-public class SimpleEclExecutor implements EpsilonLanguageExecutor<MatchTrace> {
-
-	static final Logger logger = LoggerFactory.getLogger(SimpleEclExecutor.class);
-	
-	private final IEclModule module;
-	
-	private final ModuleWrap delegate;
+public class SimpleEclExecutor implements LanguageExecutor<MatchTrace> {
 	
 	/**
 	 * Instantiates a new simple ECL executor that uses an {@link EclModule} as its module.
@@ -48,18 +43,6 @@ public class SimpleEclExecutor implements EpsilonLanguageExecutor<MatchTrace> {
 	 */
 	public SimpleEclExecutor() {
 		this(new EclModule());
-	}
-	
-	/**
-	 * Instantiates a new simple ECL executor that uses the provided {@link IEclModule}.
-	 * @see IEclModule
-	 *
-	 * @param mdl 					the ECL module to use
-	 */
-	public SimpleEclExecutor(IEclModule mdl) {
-		logger.info("Creating the EclExecutor");
-		module = mdl;
-		delegate = new ModuleWrap(module);
 	}
 
 	@Override
@@ -69,18 +52,20 @@ public class SimpleEclExecutor implements EpsilonLanguageExecutor<MatchTrace> {
 	}
 
 	@Override
-	public boolean parse(File file) throws Exception {
-		return delegate.parse(file);
+	public LanguageExecutor<MatchTrace> parsed(File file) throws EpsilonExecutorException {
+		logger.info("Parsing ECL file at {}", file.getAbsolutePath());
+		return new SimpleEclExecutor(this.module, this.delegate.parsed(file));
 	}
 
 	@Override
-	public boolean parse(String code) throws Exception {
-		return delegate.parse(code);
+	public LanguageExecutor<MatchTrace> parsed(String code) throws EpsilonExecutorException {
+		logger.info("Parsing ECL code <{}...> ", code.substring(0, 100));
+		return new SimpleEclExecutor(this.module, this.delegate.parsed(code));
 	}
 
 	@Override
-	public List<ParseProblem> getParseProblems() {
-		return delegate.getParseProblems();
+	public List<ParseProblem> parseProblems() {
+		return delegate.parseProblems();
 	}
 
 	@Override
@@ -137,5 +122,25 @@ public class SimpleEclExecutor implements EpsilonLanguageExecutor<MatchTrace> {
 	@Override
 	public void redirectErrorStream(PrintStream errorStream) {
 		delegate.redirectErrorStream(errorStream);
+	}
+
+	static final Logger logger = LoggerFactory.getLogger(SimpleEclExecutor.class);
+
+	private final IEclModule module;
+
+	private final LanguageExecutor<MatchTrace> delegate;
+
+	/**
+	 * Instantiates a new simple ECL executor that uses the provided {@link IEclModule}.
+	 * @see IEclModule
+	 *
+	 * @param mdl 					the ECL module to use
+	 */
+	private SimpleEclExecutor(IEclModule mdl) {
+		this(mdl, new ModuleWrap<>(mdl));
+	}
+	private SimpleEclExecutor(IEclModule mdl, LanguageExecutor<MatchTrace> delegate) {
+		this.module = mdl;
+		this.delegate = delegate;
 	}
 }

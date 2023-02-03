@@ -1,5 +1,6 @@
 package org.eclipse.epsilon.labs.sigma.executors;
 
+import org.eclipse.epsilon.labs.sigma.DefaultSigma;
 import org.eclipse.epsilon.labs.sigma.executors.eol.EolExecutor;
 import org.eclipse.epsilon.labs.sigma.executors.eol.SimpleEolExecutor;
 import org.junit.jupiter.api.*;
@@ -33,8 +34,8 @@ class EpsilonExecutorIntegrationTest {
 	public void runEolOperationWithoutParametersFromScript() throws Exception {
 		File script = resource2file(this.getClass(), "/EolOperationWithParameters.eol", "demo", ".eol");
 		EolExecutor eol = new SimpleEolExecutor("printHelloWorld", Collections.emptyList());
-		Executor executor = new EpsilonExecutor(eol, Paths.get(script.toURI())).redirectOutputStream(new PrintStream(baos));
-		executor.invokeExecutor();
+		Sigma executor = new DefaultSigma(eol, Paths.get(script.toURI())).redirectOutputStream(new PrintStream(baos));
+		executor.run();
 		Assertions.assertEquals("Hello World", baos.toString().trim());
 	}
 
@@ -42,8 +43,8 @@ class EpsilonExecutorIntegrationTest {
 	public void runEolOperationWithParametersFromScript() throws Exception {
 		File script = resource2file(this.getClass(), "/EolOperationWithParameters.eol", "demo", ".eol");
 		EolExecutor eol = new SimpleEolExecutor("printHelloWorldAndMessage", Collections.singletonList("Epsilon"));
-		Executor executor = new EpsilonExecutor(eol, Paths.get(script.toURI())).redirectOutputStream(new PrintStream(baos));
-		executor.invokeExecutor();
+		Sigma executor = new DefaultSigma(eol, Paths.get(script.toURI())).redirectOutputStream(new PrintStream(baos));
+		executor.run();
 		Assertions.assertEquals("Hello World, Epsilon", baos.toString().trim());
 	}
 

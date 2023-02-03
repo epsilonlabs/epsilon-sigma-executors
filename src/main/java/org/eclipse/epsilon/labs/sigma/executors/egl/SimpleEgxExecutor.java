@@ -24,7 +24,8 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
 import org.eclipse.epsilon.erl.execute.control.RuleProfiler;
-import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonExecutorException;
+import org.eclipse.epsilon.labs.sigma.executors.LanguageExecutor;
 import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +35,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Horacio Hoyos Rodriguez
  */
-public class SimpleEgxExecutor implements EpsilonLanguageExecutor<Object> {
-
-	private static final Logger logger = LoggerFactory.getLogger(SimpleEgxExecutor.class);
-	private IEgxModule module;
-	private ModuleWrap delegate;
+public class SimpleEgxExecutor implements LanguageExecutor<Object> {
 	
 	/**
 	 * Instantiates a new simple EGX executor that uses an {@link EgxModule} as its module.
@@ -64,13 +61,18 @@ public class SimpleEgxExecutor implements EpsilonLanguageExecutor<Object> {
 	 * Instantiates a new simple EGX executor with the provided {@link IEgxModule}.
 	 * @see IEgxModule
 	 *
-	 * @param mdl 					the module
+	 * @param module 					the module
 	 */
-	public SimpleEgxExecutor(IEgxModule mdl) {
-		logger.info("Creating the EgxExecutor");
-		module = mdl;
-		delegate = new ModuleWrap(module);
+	public SimpleEgxExecutor(IEgxModule module) {
+		this(module, new ModuleWrap(module));
 	}
+
+	private SimpleEgxExecutor(IEgxModule module, LanguageExecutor<Object> delegate) {
+		this.module = module;
+		this.delegate = delegate;
+	}
+
+
 	
 	@Override
 	public Object execute() throws EolRuntimeException {
@@ -79,18 +81,18 @@ public class SimpleEgxExecutor implements EpsilonLanguageExecutor<Object> {
 	}
 
 	@Override
-	public boolean parse(File file) throws Exception {
-		return delegate.parse(file);
+	public LanguageExecutor<Object> parsed(File file) throws EpsilonExecutorException {
+		return delegate.parsed(file);
 	}
 
 	@Override
-	public boolean parse(String code) throws Exception {
-		return delegate.parse(code);
+	public LanguageExecutor<Object> parsed(String code) throws EpsilonExecutorException {
+		return delegate.parsed(code);
 	}
 
 	@Override
-	public List<ParseProblem> getParseProblems() {
-		return delegate.getParseProblems();
+	public List<ParseProblem> parseProblems() {
+		return delegate.parseProblems();
 	}
 
 	@Override
@@ -148,5 +150,9 @@ public class SimpleEgxExecutor implements EpsilonLanguageExecutor<Object> {
 	public void redirectErrorStream(PrintStream errorStream) {
 		delegate.redirectErrorStream(errorStream);
 	}
+
+	private static final Logger logger = LoggerFactory.getLogger(SimpleEgxExecutor.class);
+	private IEgxModule module;
+	private LanguageExecutor<Object> delegate;
 	
 }

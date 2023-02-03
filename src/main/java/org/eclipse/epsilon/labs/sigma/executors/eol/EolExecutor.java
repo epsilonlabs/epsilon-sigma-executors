@@ -9,7 +9,7 @@
 **********************************************************************/
 package org.eclipse.epsilon.labs.sigma.executors.eol;
 
-import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.LanguageExecutor;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author Horacio Hoyos Rodriguez
  */
-public interface EolExecutor extends EpsilonLanguageExecutor<Object> {
+public interface EolExecutor extends LanguageExecutor<Object> {
 
 	enum EolMode {
 		SCRIPT,

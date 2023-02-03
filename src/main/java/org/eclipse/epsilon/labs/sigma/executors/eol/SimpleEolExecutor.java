@@ -26,7 +26,10 @@ import org.eclipse.epsilon.eol.execute.context.concurrent.EolContextParallel;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
 import org.eclipse.epsilon.erl.execute.control.RuleProfiler;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonExecutorException;
+import org.eclipse.epsilon.labs.sigma.executors.LanguageExecutor;
 import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
+import org.eclipse.epsilon.labs.sigma.executors.ecl.SimpleEclExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,14 +40,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SimpleEolExecutor implements EolExecutor {
 
-	private static final Logger logger = LoggerFactory.getLogger(SimpleEolExecutor.class);
-
-	private final Optional<String> operationName;
-	private final List<Object> arguments;
-	private final EolMode mode;
-	private IEolModule module;
-	private ModuleWrap delegate;
-	
 	/**
 	 * Instantiates a new simple EOL executor that uses an {@link EolModuleParallel} (with one 
 	 * thread) as its module.
@@ -53,16 +48,6 @@ public class SimpleEolExecutor implements EolExecutor {
 	 */
 	public SimpleEolExecutor() {
 		this(null, Collections.emptyList());
-	}
-	
-	/**
-	 * Instantiates a new simple EOL executor hat uses the provided {@link IEolModule} module.
-	 * @see IEolModule
-	 *
-	 * @param mdl 					the module
-	 */
-	public SimpleEolExecutor(IEolModule mdl) {
-		this(null, Collections.emptyList(), mdl);
 	}
 	
 	/**
@@ -80,9 +65,9 @@ public class SimpleEolExecutor implements EolExecutor {
 	public SimpleEolExecutor(String oprtnNm, List<Object> arguments) {
 		this(oprtnNm, arguments, 1);
 	}
-	
+
 	/**
-	 * Instantiates a new simple EOL executor that uses an {@link EolModuleParallel} (with one 
+	 * Instantiates a new simple EOL executor that uses an {@link EolModuleParallel} (with one
 	 * thread) as its module, but that will only execute a single operation within the code/script.
 	 * The constructor accepts a list of arguments to pass to the operation, i.e. arguments are
 	 * position based. Additionally, the number of threads to use can also be specified.
@@ -95,32 +80,13 @@ public class SimpleEolExecutor implements EolExecutor {
 	public SimpleEolExecutor(String oprtnNm, List<Object> argmnts, int nmbrThrds) {
 		this(oprtnNm, argmnts, new EolModuleParallel(new EolContextParallel(nmbrThrds)));
 	}
-	
-	/**
-	 * Instantiates a new simple EOL executor that the provided {@link IEolModule} as its module,
-	 * but that will only execute a single operation within the code/script.
-	 * The constructor accepts a list of arguments to pass to the operation, i.e. arguments are
-	 * position based. Additionally, the number of threads to use can also be specified.
-	 * @see EolModuleParallel
-	 *
-	 * @param oprtnNm 				the name of the operation to invoke
-	 * @param argmnts 				the arguments to be passed to the operation (position based).
-	 * @param mdl 					the module
-	 */
-	public SimpleEolExecutor(String oprtnNm, List<Object> argmnts, IEolModule mdl) {
-		operationName = Optional.ofNullable(oprtnNm);
-		mode = operationName.isPresent() ? EolMode.OPERATION : EolMode.SCRIPT;
-		arguments = argmnts;
-		module = mdl;
-		delegate = new ModuleWrap(module);
-	}
 
 	@Override
 	public Object execute() throws EolRuntimeException {
 		switch(mode) {
 			case SCRIPT:
 				logger.info("Executing complete EOL script.");
-				return module.execute();	
+				return module.execute();
 			case OPERATION:
 				Operation operation = module
 						.getDeclaredOperations()
@@ -133,27 +99,29 @@ public class SimpleEolExecutor implements EolExecutor {
 
 	@Override
 	public EolExecutor changeOperation(String operationName, List<Object> arguments) {
-		return new SimpleEolExecutor(operationName, arguments);
+		return new SimpleEolExecutor(operationName, arguments, this.module, this.delegate);
 	}
 	
 	@Override
 	public EolExecutor changeOperation(String operationName) {
-		return new SimpleEolExecutor(operationName, Collections.emptyList());
+		return new SimpleEolExecutor(operationName, Collections.emptyList(), this.module, this.delegate);
 	}
 
 	@Override
-	public boolean parse(File file) throws Exception {
-		return delegate.parse(file);
+	public LanguageExecutor<Object> parsed(File file) throws EpsilonExecutorException {
+		logger.info("Parsing EOL file at {}", file.getAbsolutePath());
+		return new SimpleEolExecutor(this.operationName.orElse(null), this.arguments, this.module, this.delegate.parsed(file));
 	}
 
 	@Override
-	public boolean parse(String code) throws Exception {
-		return delegate.parse(code);
+	public LanguageExecutor<Object> parsed(String code) throws EpsilonExecutorException {
+		logger.info("Parsing EOL code <{}...> ", code.substring(0, 100));
+		return new SimpleEolExecutor(this.operationName.orElse(null), this.arguments, this.module, this.delegate.parsed(code));
 	}
 
 	@Override
-	public List<ParseProblem> getParseProblems() {
-		return delegate.getParseProblems();
+	public List<ParseProblem> parseProblems() {
+		return delegate.parseProblems();
 	}
 
 	@Override
@@ -212,4 +180,33 @@ public class SimpleEolExecutor implements EolExecutor {
 		delegate.redirectErrorStream(errorStream);
 	}
 
+	private static final Logger logger = LoggerFactory.getLogger(SimpleEolExecutor.class);
+
+	private final Optional<String> operationName;
+	private final List<Object> arguments;
+	private final EolMode mode;
+	private final IEolModule module;
+	private final LanguageExecutor<Object> delegate;
+
+	/**
+	 * Instantiates a new simple EOL executor hat uses the provided {@link IEolModule} module.
+	 * @see IEolModule
+	 *
+	 *
+	 */
+	private SimpleEolExecutor(String oprtnNm, List<Object> argmnts, IEolModule module) {
+		this(oprtnNm, argmnts, module, new ModuleWrap<>(module));
+	}
+
+	private SimpleEolExecutor(
+		String operationName,
+		List<Object> arguments,
+		IEolModule module,
+		LanguageExecutor<Object> delegate) {
+		this.operationName = Optional.ofNullable(operationName);
+		this.arguments = arguments;
+		this.module = module;
+		this.mode = operationName == null ? EolMode.OPERATION : EolMode.SCRIPT;
+		this.delegate = delegate;
+	}
 }

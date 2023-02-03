@@ -36,35 +36,37 @@ import org.eclipse.epsilon.erl.execute.control.RuleProfiler;
  * @author Horacio Hoyos Rodriguez
  *
  */
-public interface EpsilonLanguageExecutor<R> {
+public interface LanguageExecutor<R> {
 
 	/**
 	 * Parse the file using the language parser.
-	 * @param file					the file to parse
-	 * @return true, if the File contains a valid program for the language
-	 * @throws Exception if the parser encounters any issues
+	 *
+	 * @param file the file to parse
+	 * @return a new executor
+	 * @throws EpsilonExecutorException if the parser encounters any issues
 	 */
-	boolean parse(File file) throws Exception;
+	LanguageExecutor<R> parsed(File file) throws EpsilonExecutorException;
 	
 	/**
 	 * Parse the string using the language parser.
-	 * @param code					A string that contains the code to parse
+	 *
+	 * @param code A string that contains the code to parse
 	 * @return true, if the File contains a valid program for the language
-	 * @throws Exception if the parser encounters any issues
+	 * @throws EpsilonExecutorException if the parser encounters any issues
 	 */
-	boolean parse(String code) throws Exception;
+	LanguageExecutor<R> parsed(String code) throws EpsilonExecutorException;
 	
 	/**
 	 * Return a list of parsing problems.
-	 * @see #parse(File)
+	 * @see #parsed(File)
 	 * @return	a list of parse problems
 	 */
-	List<ParseProblem> getParseProblems();
-	
+	List<ParseProblem> parseProblems();
+
 	/**
 	 * Add the collection of models to the models used during execution.
 	 * <p>
-	 * 
+	 *
 	 * @param models				the models to add
 	 * @see IModel
 	 */

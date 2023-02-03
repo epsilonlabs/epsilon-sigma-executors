@@ -12,7 +12,7 @@ package org.eclipse.epsilon.labs.sigma.executors.util;
 import org.eclipse.epsilon.common.module.ModuleElement;
 import org.eclipse.epsilon.erl.dom.NamedRule;
 import org.eclipse.epsilon.erl.execute.control.RuleProfiler;
-import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.LanguageExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -159,7 +159,7 @@ public class ExecutionTimeData {
 	 *
 	 * @param languageExecutor the language executor
 	 */
-	public void endModule(EpsilonLanguageExecutor<?> languageExecutor) {
+	public void endModule(LanguageExecutor<?> languageExecutor) {
 		Optional<RuleProfiler> ruleProfiler = languageExecutor.getRuleProfiler();
 		if(ruleProfiler.isPresent()) {
 			for (Map.Entry<ModuleElement, Duration> entry : ruleProfiler.get().getExecutionTimes().entrySet()) {

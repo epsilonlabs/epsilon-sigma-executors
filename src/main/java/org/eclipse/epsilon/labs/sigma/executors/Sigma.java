@@ -18,7 +18,29 @@ import java.util.Optional;
  * The Executor interface defines the API for Epsilon executors
  * @author Horacio Hoyos Rodriguez
  */
-public interface Executor {
+public interface Sigma {
+
+	public interface SigmaRunnable<R> extends Runnable {
+		/**
+		 * Returns <code>true</code> if the Executor executed without exceptions.
+		 * @return <code>true</code> if execution completed
+		 */
+		boolean completed();
+
+		/**
+		 * If an <code>Exception</code> was thrown during execution return an
+		 * Optional describing the value, otherwise return an empty Optional.
+		 * @return an Optional describing the value of the exception thrown,
+		 *  otherwise return an empty Optional.
+		 */
+		Optional<Exception> exception();
+
+		/**
+		 * Returns the result of the Executor execution.
+		 * @return
+		 */
+		R getResult();
+	}
 
 	ExecutionTimeData NO_TIME_DATA = new ExecutionTimeData();
 	
@@ -31,13 +53,11 @@ public interface Executor {
 	Optional<ExecutionTimeData> getExecutionTimeData();
 
 	/**
-	 * Create a Runnable so the executor can be executed in a thread. Internally the
-	 * {@link #invokeExecutor()} is called. Any exceptions will be wrapped inside a
-	 * {@link RuntimeException}.
-	 * @param <T> 			the return type of the executed module
-	 * @return  the result of the execution
+	 * Wrap the executor in a SigmaRunnable that can be started in a Thread.
+	 * @param <R> 			the return type of the executed module
+	 * @return  A {@link SigmaRunnable} that can be run.
 	 */
-	<T> Runnable executeInThread();
+	<R> SigmaRunnable<R> runInThread();
 
 	/**
 	 * Execute the specific executor by executing all the execution stages.
@@ -45,7 +65,7 @@ public interface Executor {
 	 * @throws EpsilonExecutorException if there is an error during execution
 	 * @param <R> 			the return type of the executed module
 	 */
-	<R> R invokeExecutor() throws EpsilonExecutorException;
+	<R> R run() throws EpsilonExecutorException;
 
 	/**
 	 * Disposes the executor. Implementing classes should perform any clean actions.
@@ -65,7 +85,7 @@ public interface Executor {
 	 * @return  a new Executor that uses the provided stream for output
 	 * @since 2.1.0
 	 */
-	Executor redirectOutputStream(PrintStream outputStream);
+	Sigma redirectOutputStream(PrintStream outputStream);
 
 	/**
 	 * Change the output stream of the Executor. This will change the target of all the warning messages generated
@@ -75,7 +95,7 @@ public interface Executor {
 	 * @return  a new Executor that uses the provided stream for output
 	 * @since 2.1.0
 	 */
-	Executor redirectWarningStream(PrintStream warningStream);
+	Sigma redirectWarningStream(PrintStream warningStream);
 
 	/**
 	 * Change the output stream of the Executor. This will change the target of all the error messages generated
@@ -85,6 +105,6 @@ public interface Executor {
 	 * @return  a new Executor that uses the provided stream for output
 	 * @since 2.1.0
 	 */
-	Executor redirectErrorStream(PrintStream errorStream);
+	Sigma redirectErrorStream(PrintStream errorStream);
 
 }

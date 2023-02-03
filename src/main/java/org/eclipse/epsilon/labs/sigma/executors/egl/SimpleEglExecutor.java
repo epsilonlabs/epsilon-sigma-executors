@@ -23,8 +23,10 @@ import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.models.IModel;
 import org.eclipse.epsilon.eol.types.IToolNativeTypeDelegate;
 import org.eclipse.epsilon.erl.execute.control.RuleProfiler;
-import org.eclipse.epsilon.labs.sigma.executors.EpsilonLanguageExecutor;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonExecutorException;
+import org.eclipse.epsilon.labs.sigma.executors.LanguageExecutor;
 import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
+import org.eclipse.epsilon.labs.sigma.executors.ecl.SimpleEclExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,13 +35,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Horacio Hoyos Rodriguez
  */
-public class SimpleEglExecutor implements EpsilonLanguageExecutor<Optional<String>> {
-
-	private static final Logger logger = LoggerFactory.getLogger(SimpleEglExecutor.class);
-	
-	private EglTemplateFactoryModuleAdapter module;
-	
-	private ModuleWrap delegate;
+public class SimpleEglExecutor implements LanguageExecutor<Optional<String>> {
 
 	/**
 	 * Instantiates a new simple EGL executor that uses an {@link EglTemplateFactoryModuleAdapter}
@@ -67,31 +63,39 @@ public class SimpleEglExecutor implements EpsilonLanguageExecutor<Optional<Strin
 	 * @param mdl 					the Template Factory Module Adapter to use
 	 */
 	public SimpleEglExecutor(EglTemplateFactoryModuleAdapter mdl) {
-		logger.info("Creating the EglExecutor");
-		module = mdl;
-    	delegate = new ModuleWrap(module);
+		this(mdl, new ModuleWrap<>(mdl));
 	}
-	
+
+	private SimpleEglExecutor(
+		EglTemplateFactoryModuleAdapter mdl,
+		LanguageExecutor<Optional<String>> delegate) {
+		this.module = mdl;
+		this.delegate = delegate;
+	}
+
+
 	@Override
 	public Optional<String> execute() throws EolRuntimeException {
 		logger.info("Executing current EGL template.");
-		String r = (String) ((EglTemplateFactoryModuleAdapter)module).execute();
+		String r = (String) module.execute();
 		return Optional.ofNullable(r);
 	}
 
 	@Override
-	public boolean parse(File file) throws Exception {
-		return delegate.parse(file);
+	public LanguageExecutor<Optional<String>> parsed(File file) throws EpsilonExecutorException {
+		logger.info("Parsing EGL file at {}", file.getAbsolutePath());
+		return new SimpleEglExecutor(this.module, this.delegate.parsed(file));
 	}
 
 	@Override
-	public boolean parse(String code) throws Exception {
-		return delegate.parse(code);
+	public LanguageExecutor<Optional<String>> parsed(String code) throws EpsilonExecutorException {
+		logger.info("Parsing EGL code <{}...> ", code.substring(0, 100));
+		return new SimpleEglExecutor(this.module, this.delegate.parsed(code));
 	}
 
 	@Override
-	public List<ParseProblem> getParseProblems() {
-		return delegate.getParseProblems();
+	public List<ParseProblem> parseProblems() {
+		return delegate.parseProblems();
 	}
 
 	@Override
@@ -149,5 +153,11 @@ public class SimpleEglExecutor implements EpsilonLanguageExecutor<Optional<Strin
 	public void redirectErrorStream(PrintStream errorStream) {
 		delegate.redirectErrorStream(errorStream);
 	}
+
+	private static final Logger logger = LoggerFactory.getLogger(SimpleEglExecutor.class);
+
+	private EglTemplateFactoryModuleAdapter module;
+
+	private LanguageExecutor<Optional<String>> delegate;
 
 }

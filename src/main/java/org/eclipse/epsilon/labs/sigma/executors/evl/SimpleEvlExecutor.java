@@ -33,7 +33,10 @@ import org.eclipse.epsilon.evl.dom.ConstraintContext;
 import org.eclipse.epsilon.evl.execute.CommandLineFixer;
 import org.eclipse.epsilon.evl.execute.UnsatisfiedConstraint;
 import org.eclipse.epsilon.evl.execute.context.concurrent.EvlContextParallel;
+import org.eclipse.epsilon.labs.sigma.executors.EpsilonExecutorException;
+import org.eclipse.epsilon.labs.sigma.executors.LanguageExecutor;
 import org.eclipse.epsilon.labs.sigma.executors.ModuleWrap;
+import org.eclipse.epsilon.labs.sigma.executors.ecl.SimpleEclExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,10 +46,6 @@ import org.slf4j.LoggerFactory;
  * @author Horacio Hoyos Rodriguez
  */
 public class SimpleEvlExecutor implements EvlExecutor {
-
-	private static final Logger logger = LoggerFactory.getLogger(SimpleEvlExecutor.class);
-	private final IEvlModule module;
-	private ModuleWrap delegate;
 	
 	/**
 	 * Instantiates a new simple EVL executor that uses an {@link EvlModule} as its module and
@@ -72,10 +71,10 @@ public class SimpleEvlExecutor implements EvlExecutor {
 	 * Instantiates a new simple EVL executor that uses an {@link EvlModule} as its module and
 	 * the provided {@link IEvlFixer} as a constraint fixer.
 	 *
-	 * @param evlFixer 				the fixer to use
+	 * @param fixer 				the fixer to use
 	 */
-	public SimpleEvlExecutor(IEvlFixer evlFixer) {
-		this(new EvlModule(), evlFixer);
+	public SimpleEvlExecutor(IEvlFixer fixer) {
+		this(new EvlModule(), fixer);
     }
     
 	/**
@@ -84,24 +83,30 @@ public class SimpleEvlExecutor implements EvlExecutor {
 	 * threads.
 	 *
 	 * @param numThreads 			the number of threads to use
-	 * @param evlFixer 				the fixer to use
+	 * @param fixer 				the fixer to use
 	 */
-	public SimpleEvlExecutor(int numThreads, IEvlFixer evlFixer) {
-		this(new EvlModuleParallelElements(new EvlContextParallel(numThreads)), evlFixer);
+	public SimpleEvlExecutor(int numThreads, IEvlFixer fixer) {
+		this(new EvlModuleParallelElements(new EvlContextParallel(numThreads)), fixer);
     }
     
 	/**
 	 * Instantiates a new simple EVL executor that uses the provided {@link IEvlModule} module and
 	 * the provided {@link IEvlFixer} as a constraint fixer.
 	 *
-	 * @param mdl 					the module
-	 * @param evlFixer 				the fixer
+	 * @param module 					the module
+	 * @param fixer 				the fixer
 	 */
-	public SimpleEvlExecutor(IEvlModule mdl, IEvlFixer evlFixer) {
-		logger.info("Creating the EvlExecutor");
-		module = mdl;
-		delegate = new ModuleWrap(module);
-		module.setUnsatisfiedConstraintFixer(evlFixer);
+	public SimpleEvlExecutor(IEvlModule module, IEvlFixer fixer) {
+		this(module, fixer, new ModuleWrap<>(module));
+		//module = mdl;
+		//delegate = new ModuleWrap<>(module);
+		//
+	}
+
+	private SimpleEvlExecutor(IEvlModule mdl, IEvlFixer fixer, LanguageExecutor<Collection<UnsatisfiedConstraint>> delegate) {
+		this.module = mdl;
+		this.delegate = delegate;
+		this.module.setUnsatisfiedConstraintFixer(fixer);
 	}
     
 	@Override
@@ -130,18 +135,20 @@ public class SimpleEvlExecutor implements EvlExecutor {
 	}
 
 	@Override
-	public boolean parse(File file) throws Exception {
-		return delegate.parse(file);
+	public LanguageExecutor<Collection<UnsatisfiedConstraint>> parsed(File file) throws EpsilonExecutorException {
+		logger.info("Parsing EVL file at {}", file.getAbsolutePath());
+		return new SimpleEvlExecutor(this.module, this.module.getUnsatisfiedConstraintFixer(), this.delegate.parsed(file));
 	}
 
 	@Override
-	public boolean parse(String code) throws Exception {
-		return delegate.parse(code);
+	public LanguageExecutor<Collection<UnsatisfiedConstraint>> parsed(String code) throws EpsilonExecutorException {
+		logger.info("Parsing EVL code <{}...> ", code.substring(0, 100));
+		return new SimpleEvlExecutor(this.module, this.module.getUnsatisfiedConstraintFixer(), this.delegate.parsed(code));
 	}
 
 	@Override
-	public List<ParseProblem> getParseProblems() {
-		return delegate.getParseProblems();
+	public List<ParseProblem> parseProblems() {
+		return delegate.parseProblems();
 	}
 
 	@Override
@@ -271,6 +278,10 @@ public class SimpleEvlExecutor implements EvlExecutor {
 			writer.println(division);
 		}
 	}
+
+	private static final Logger logger = LoggerFactory.getLogger(SimpleEvlExecutor.class);
+	private final IEvlModule module;
+	private final LanguageExecutor<Collection<UnsatisfiedConstraint>> delegate;
 
 	/**
 	 * Classify unsatisfied constraints into constraints and critiques
